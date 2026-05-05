@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Home Mock</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe5f1;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #d97706;
+      --shadow: 0 18px 48px rgba(15,23,42,.12);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #eaf2ff 0%, #f6f9ff 38%, #f2f6fb 100%);
+      color: var(--text);
+    }
+    .device {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 10px 12px 28px;
+    }
+    .screen {
+      min-height: calc(100vh - 20px);
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, #f8fbff 100%);
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+      border-radius: 36px;
+      overflow: hidden;
+      padding: 14px 16px 102px;
+      position: relative;
+    }
+    .statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .avatar, .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(255,255,255,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 8px 20px rgba(37,99,235,.08);
+      font-size: 18px;
+    }
+    .eyebrow { font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 8px; }
+    .title { font-size: 30px; font-weight: 800; line-height: 1.04; letter-spacing: -.04em; margin: 0; }
+    .subtitle { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .section { margin-top: 16px; }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(219,229,241,.9);
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+    }
+    .portfolio { padding: 18px; }
+    .portfolio-top { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; }
+    .label { color: var(--muted); font-size: 12px; font-weight: 800; margin-bottom: 6px; }
+    .big { font-size: 34px; font-weight: 800; letter-spacing: -.04em; }
+    .mini { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.45; }
+    .health {
+      min-width: 126px; padding: 12px; border-radius: 18px; background: var(--surface-2); border: 1px solid var(--line);
+    }
+    .health-line { display:flex; justify-content:space-between; font-size:12px; color: var(--muted); margin-top:8px; }
+    .metrics { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+    .metric { padding: 14px; border-radius: 18px; background: var(--surface-2); border: 1px solid var(--line); }
+    .metric .name { font-size: 11px; color: var(--muted); font-weight: 800; margin-bottom: 8px; }
+    .metric .value { font-size: 19px; font-weight: 800; }
+    .green { color: var(--green); } .red { color: var(--red); } .amber { color: var(--amber); }
+    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
+    .section-title { font-size: 17px; font-weight: 800; }
+    .link { color: var(--primary); font-size: 13px; font-weight: 800; }
+    .voice-card { padding: 16px; background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); border: 1px solid #dbeafe; }
+    .voice-row { display:flex; justify-content:space-between; gap: 12px; align-items:center; }
+    .voice-title { font-size: 19px; font-weight: 800; }
+    .voice-sub { color: var(--muted); font-size: 13px; line-height: 1.45; margin-top: 6px; }
+    .mic { width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(180deg, #2563eb, #1d4ed8); color: #fff; display:flex; align-items:center; justify-content:center; font-size: 30px; }
+    .voice-actions { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .btn { border:none; border-radius: 18px; padding: 14px 12px; font-weight: 800; font-size: 14px; }
+    .btn.primary { background: linear-gradient(180deg, var(--primary), var(--primary-dark)); color:#fff; }
+    .btn.ghost { background:#fff; border:1px solid var(--line); color:#0f172a; }
+    .list { display:grid; gap: 12px; }
+    .property-card { padding: 16px; }
+    .property-top { display:flex; justify-content:space-between; gap: 12px; }
+    .property-name { font-size: 16px; font-weight: 800; }
+    .property-sub { margin-top: 5px; font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .property-net { font-weight: 800; font-size: 18px; }
+    .chips { display:flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .chip { background: #eef2ff; color: #3730a3; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 999px; }
+    .attention { padding: 15px; }
+    .attention-title { font-size: 15px; font-weight: 800; }
+    .attention-sub { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
+    .bottom-bar {
+      position: absolute; left: 16px; right: 16px; bottom: 16px; display:flex; justify-content:space-around;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-radius: 24px; padding: 12px 14px;
+      border:1px solid rgba(255,255,255,.88); box-shadow: 0 16px 34px rgba(15,23,42,.12);
+      font-size: 11px; font-weight: 800;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:5px; color:#334155; }
+    .nav-item.active { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="screen">
+      <div class="statusbar">
+        <div>9:41</div>
+        <div>◔◔◔ 100%</div>
+      </div>
+
+      <div class="top">
+        <div class="avatar">🏠</div>
+        <div class="icon">🔔</div>
+      </div>
+
+      <div class="eyebrow">Good evening, Jerry</div>
+      <h1 class="title">Your portfolio, at a glance</h1>
+      <div class="subtitle">See the whole business first, then drill into the property only when you need detail.</div>
+
+      <div class="section">
+        <div class="card portfolio">
+          <div class="portfolio-top">
+            <div>
+              <div class="label">Portfolio net this month</div>
+              <div class="big">+$4,830</div>
+              <div class="mini">Across 3 properties and 5 active units</div>
+            </div>
+            <div class="health">
+              <div class="label" style="margin-bottom:0;">Status</div>
+              <div class="health-line"><span>Collections</span><strong class="green">Good</strong></div>
+              <div class="health-line"><span>Vacancy</span><strong class="amber">1 unit</strong></div>
+              <div class="health-line"><span>Issues</span><strong>2 open</strong></div>
+            </div>
+          </div>
+          <div class="metrics">
+            <div class="metric"><div class="name">Income</div><div class="value green">$6,250</div></div>
+            <div class="metric"><div class="name">Expenses</div><div class="value red">$1,420</div></div>
+            <div class="metric"><div class="name">Occupancy</div><div class="value amber">83%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card voice-card">
+          <div class="voice-row">
+            <div>
+              <div class="label">Voice-first action</div>
+              <div class="voice-title">Hands-free quick add</div>
+              <div class="voice-sub">Speak rent, repair, or expense. Rentzu maps it to the right property and only asks for missing detail.</div>
+            </div>
+            <div class="mic">🎤</div>
+          </div>
+          <div class="voice-actions">
+            <button class="btn primary">Start voice</button>
+            <button class="btn ghost">Manual add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Properties</div>
+          <div class="link">View all</div>
+        </div>
+        <div class="list">
+          <div class="card property-card">
+            <div class="property-top">
+              <div>
+                <div class="property-name">Elm Street Duplex</div>
+                <div class="property-sub">2 units, 1 occupied, last update: Unit 2 repair</div>
+              </div>
+              <div class="property-net green">+$1,915</div>
+            </div>
+            <div class="chips"><div class="chip">1 vacancy</div><div class="chip">1 open issue</div></div>
+          </div>
+          <div class="card property-card">
+            <div class="property-top">
+              <div>
+                <div class="property-name">Oak House</div>
+                <div class="property-sub">1 unit, occupied, last rent received Apr 1</div>
+              </div>
+              <div class="property-net green">+$1,800</div>
+            </div>
+            <div class="chips"><div class="chip">Stable</div></div>
+          </div>
+          <div class="card property-card">
+            <div class="property-top">
+              <div>
+                <div class="property-name">Main Ave Fourplex</div>
+                <div class="property-sub">4 units, 4 occupied, insurance due soon</div>
+              </div>
+              <div class="property-net green">+$1,115</div>
+            </div>
+            <div class="chips"><div class="chip">Insurance due</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Needs attention</div>
+          <div class="link">Open tasks</div>
+        </div>
+        <div class="list">
+          <div class="card attention">
+            <div class="attention-title">Elm Street Duplex, Unit 2 is vacant</div>
+            <div class="attention-sub">Follow up on turnover, cleaning, and relisting.</div>
+          </div>
+          <div class="card attention">
+            <div class="attention-title">Main Ave Fourplex, insurance due in 5 days</div>
+            <div class="attention-sub">Property-level reminder so it does not slip past month-end.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-bar">
+        <div class="nav-item active"><div>🏠</div><div>Home</div></div>
+        <div class="nav-item"><div>📁</div><div>Properties</div></div>
+        <div class="nav-item"><div>🎤</div><div>Voice</div></div>
+        <div class="nav-item"><div>📊</div><div>Reports</div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

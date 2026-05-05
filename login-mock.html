@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Login Mock</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe5f1;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --green: #16a34a;
+      --shadow: 0 18px 48px rgba(15,23,42,.12);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #eaf2ff 0%, #f6f9ff 38%, #f2f6fb 100%);
+      color: var(--text);
+    }
+    .device {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 10px 12px 28px;
+    }
+    .screen {
+      min-height: calc(100vh - 20px);
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, #f8fbff 100%);
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+      border-radius: 36px;
+      overflow: hidden;
+      padding: 14px 16px 24px;
+    }
+    .statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .brand, .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      min-height: 42px;
+    }
+    .brand {
+      gap: 10px;
+      padding: 0 14px 0 8px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: 0 8px 20px rgba(37,99,235,.08);
+      font-weight: 800;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-size: 17px;
+    }
+    .pill {
+      padding: 0 14px;
+      background: var(--primary-soft);
+      border: 1px solid #dbeafe;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .hero-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.04;
+      letter-spacing: -.04em;
+      font-weight: 800;
+    }
+    .subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .card {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid rgba(219,229,241,.9);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+    }
+    .auth-card {
+      padding: 18px;
+    }
+    .auth-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .auth-title {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .secure {
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #f0fdf4;
+      color: var(--green);
+      border: 1px solid #dcfce7;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .field { margin-top: 14px; }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 16px;
+      padding: 15px 14px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .primary-btn, .secondary-btn {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 15px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .primary-btn {
+      margin-top: 16px;
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 14px 24px rgba(37,99,235,.22);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .secondary-btn {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .helper {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .helper a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+    .voice-card {
+      padding: 16px;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border: 1px solid #dbeafe;
+    }
+    .voice-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+    .voice-title { font-size: 18px; font-weight: 800; }
+    .voice-sub { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .mic {
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex: none;
+    }
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .feature {
+      display: flex;
+      gap: 12px;
+      padding: 15px 16px;
+      align-items: flex-start;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-top: 7px;
+      background: linear-gradient(180deg, var(--primary), #60a5fa);
+      box-shadow: 0 0 0 6px rgba(37,99,235,.08);
+      flex: none;
+    }
+    .feature-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .feature-text { color: var(--muted); font-size: 13px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="screen">
+      <div class="statusbar">
+        <div>9:41</div>
+        <div>◔◔◔ 100%</div>
+      </div>
+
+      <div class="brand-row">
+        <div class="brand">
+          <div class="brand-icon">🏠</div>
+          <div>Rentzu</div>
+        </div>
+        <div class="pill">Voice-first</div>
+      </div>
+
+      <div class="hero-label">Property management for landlords</div>
+      <h1 class="title">Hands-free property management</h1>
+      <div class="subtitle">Voice capture, bookkeeping replacement, and tax-ready records in one landlord app.</div>
+
+      <div class="card auth-card">
+        <div class="auth-top">
+          <div>
+            <div class="label">Sign in</div>
+            <div class="auth-title">Get back into your portfolio</div>
+          </div>
+          <div class="secure">Secure</div>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="jerry@example.com" />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" placeholder="Enter your password" />
+        </div>
+
+        <button class="primary-btn">Sign in</button>
+
+        <div class="row">
+          <button class="secondary-btn">Create account</button>
+          <button class="secondary-btn">Magic link</button>
+        </div>
+
+        <div class="helper">Need help?<a href="#">Reset password</a></div>
+      </div>
+
+      <div class="card voice-card">
+        <div class="voice-row">
+          <div>
+            <div class="label">Top selling point</div>
+            <div class="voice-title">Hands-free voice capture</div>
+            <div class="voice-sub">Just speak rent, repairs, or expenses. Rentzu structures it for the right property and asks only one follow-up if needed.</div>
+          </div>
+          <div class="mic">🎤</div>
+        </div>
+      </div>
+
+      <div class="feature-list">
+        <div class="card feature">
+          <div class="dot"></div>
+          <div>
+            <div class="feature-title">Fire your bookkeeping accountant</div>
+            <div class="feature-text">Stop paying someone to clean up scattered landlord notes and receipts after the fact.</div>
+          </div>
+        </div>
+
+        <div class="card feature">
+          <div class="dot"></div>
+          <div>
+            <div class="feature-title">Tax-ready records</div>
+            <div class="feature-text">Keep property-level income and expenses clean all year for accountant-ready exports and year-end summaries.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

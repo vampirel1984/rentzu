@@ -1,0 +1,11 @@
+我建议你下一步让我继续补的内容
+最值钱的下一批会是：
+
+organizations router
+最小 users/me 逻辑
+seed/test data 脚本
+README + 项目结构说明
+真正的 auth 占位方案
+lease 先不做 router，但补 model-level future note
+如果你愿意，我下一步可以继续直接把
+organizations + seed data + README 一口气补掉。

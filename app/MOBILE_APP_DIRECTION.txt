@@ -1,0 +1,47 @@
+Rentzu Mobile App Direction
+===========================
+
+Decision
+--------
+Rentzu should go directly toward a real mobile app path.
+Do not continue building the UI as plain HTML/CSS/JS mock pages.
+
+Chosen direction
+----------------
+- UI app folder name remains: app
+- This app folder should become a React Native / Expo application
+- Backend remains FastAPI under server
+
+Reason
+------
+- Product target is mobile app first
+- Plain HTML mock pages are not the correct final path for Google Play deployment
+- React Native / Expo is a better fit than continuing static browser UI prototypes
+- User already prefers direct mobile app implementation instead of web detours
+
+Target structure
+----------------
+D:\apps\rentzu
+- app\        -> React Native / Expo mobile client
+- server\     -> FastAPI backend
+- system-architecture\
+- schema_updates\
+
+Recommended next frontend steps
+-------------------------------
+1. Initialize app as Expo project
+2. Build screens in React Native:
+   - LoginScreen
+   - VerifyEmailScreen
+   - HomeScreen
+3. Connect app to FastAPI auth endpoints
+4. Add onboarding for:
+   - user profile
+   - individual vs LLC
+   - organization creation
+5. Prepare Android-focused testing first
+
+Do not continue
+---------------
+- Do not keep extending plain HTML files as the main UI path
+- Do not treat static mock pages as deployable mobile product code

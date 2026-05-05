@@ -1,0 +1,40 @@
+Rentzu Server Startup Guide
+===========================
+
+1. Open terminal in:
+   D:\apps\rentzu
+
+2. Activate virtual environment if already created:
+   .venv\Scripts\activate
+
+3. Install/update dependencies from project root:
+   pip install -r requirements.txt
+
+4. Go to server src:
+   cd server\src
+
+5. Start FastAPI:
+   uvicorn main:app --reload
+
+5. Open Swagger:
+   http://127.0.0.1:8000/docs
+
+Current auth demo flow
+----------------------
+- POST /auth/request-code
+- POST /auth/verify-code
+
+Current demo verification code
+------------------------------
+123456 (when `RENTZU_FIXED_VERIFICATION_CODE=123456` is set)
+
+Current bootstrap behavior
+--------------------------
+- If the email is new, successful verification currently bootstraps a starter user record
+- It also bootstraps an individual organization record for that user path
+- It also creates an `organization_users` owner mapping when missing
+
+Email delivery behavior
+-----------------------
+- If SMTP env vars are configured, verification emails are sent through SMTP
+- If SMTP is not configured, the server writes the email payload to `D:\apps\rentzu\server\outbox\...json`

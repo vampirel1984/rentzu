@@ -1,0 +1,43 @@
+Rentzu App Structure Plan
+=========================
+
+Target: React Native / Expo
+
+Planned app structure
+---------------------
+app/
+  app.json
+  package.json
+  babel.config.js
+  assets/
+  src/
+    screens/
+      LoginScreen.tsx
+      VerifyEmailScreen.tsx
+      HomeScreen.tsx
+    components/
+    services/
+      api.ts
+      auth.ts
+    navigation/
+    theme/
+    hooks/
+
+Initial mobile flow
+-------------------
+1. User opens app
+2. Login screen
+3. Request email verification code from FastAPI server
+4. Verify code screen
+5. Verification success
+6. Enter home screen
+
+Server integration needed
+-------------------------
+- POST /auth/request-code
+- POST /auth/verify-code
+- later: user/org onboarding endpoints
+
+Android-first note
+------------------
+For now, optimize for Android testing first because deployment target discussion has focused on Google Play.

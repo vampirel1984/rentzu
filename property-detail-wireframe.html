@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu Property Detail Wireframe</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --good: #15803d;
+      --bad: #dc2626;
+      --chip: #eef2ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg);
+      padding-bottom: 32px;
+    }
+    .topbar {
+      background: #fff;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+    }
+    .crumb { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .title { font-size: 22px; font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .section { padding: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .hero-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-secondary { background: #eef2ff; color: var(--primary); }
+    .mic-box {
+      margin-top: 16px;
+      border: 2px dashed #bfdbfe;
+      background: #f8fbff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .mic-title { font-weight: 700; margin-bottom: 8px; }
+    .mic-prompt { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .metric-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .metric-value { font-size: 22px; font-weight: 700; }
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .record-list, .unit-list { display: grid; gap: 10px; }
+    .record {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .record-top { display: flex; justify-content: space-between; gap: 12px; }
+    .record-title { font-weight: 600; }
+    .record-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .chip {
+      display: inline-block;
+      background: var(--chip);
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .unit {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .unit-name { font-weight: 700; }
+    .unit-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="crumb">Properties / Elm Street Duplex</div>
+      <div class="title">Elm Street Duplex</div>
+      <div class="subtitle">Property-first view for small landlords</div>
+    </div>
+
+    <div class="section">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div style="font-size:12px;color:#6b7280;">This month</div>
+            <div style="font-size:28px;font-weight:800;">+$1,915</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px;color:#6b7280;">2 units · 1 occupied</div>
+            <div style="font-size:13px;color:#2563eb;font-weight:600;">Property summary</div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Income</div>
+            <div class="metric-value good">$2,400</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Expenses</div>
+            <div class="metric-value bad">$485</div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary">🎤 Voice add record</button>
+          <button class="btn btn-secondary">＋ Manual add</button>
+        </div>
+
+        <div class="mic-box">
+          <div class="mic-title">Quick voice capture</div>
+          <div class="mic-prompt">
+            Say things like: “Unit 2 toilet repair 85 dollars” or “Received April rent 1200 from Bob”.
+            The app should first map to the property, then optionally to a unit.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Recent records</div>
+      <div class="record-list">
+        <div class="record">
+          <div class="record-top">
+            <div>
+              <div class="record-title">April rent payment</div>
+              <div class="record-sub">From Bob Smith · Unit 1 · Apr 1</div>
+            </div>
+            <div class="good" style="font-weight:700;">+$1,200</div>
+          </div>
+          <div class="chip">Income · property + unit</div>
+        </div>
+
+        <div class="record">
+          <div class="record-top">
+            <div>
+              <div class="record-title">Toilet repair</div>
+              <div class="record-sub">Mike Plumbing · Unit 2 · Apr 6</div>
+            </div>
+            <div class="bad" style="font-weight:700;">-$85</div>
+          </div>
+          <div class="chip">Expense · property + unit</div>
+        </div>
+
+        <div class="record">
+          <div class="record-top">
+            <div>
+              <div class="record-title">Property insurance</div>
+              <div class="record-sub">State Farm · Whole property · Apr 3</div>
+            </div>
+            <div class="bad" style="font-weight:700;">-$400</div>
+          </div>
+          <div class="chip">Expense · property only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Units</div>
+      <div class="unit-list">
+        <div class="unit">
+          <div class="row">
+            <div>
+              <div class="unit-name">Unit 1</div>
+              <div class="unit-sub">Occupied · Bob Smith</div>
+            </div>
+            <div style="font-weight:700;">$1,200/mo</div>
+          </div>
+        </div>
+        <div class="unit">
+          <div class="row">
+            <div>
+              <div class="unit-name">Unit 2</div>
+              <div class="unit-sub">Vacant · Last activity: repair</div>
+            </div>
+            <div style="font-weight:700;color:#6b7280;">Vacant</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        Product rule: property is the main reporting level. Unit is only for drill-down when needed.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

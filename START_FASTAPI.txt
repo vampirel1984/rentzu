@@ -1,0 +1,37 @@
+Rentzu FastAPI Startup Guide
+============================
+
+1. Open terminal in:
+   D:\apps\rentzu
+
+2. Create virtual environment:
+   python -m venv .venv
+
+3. Activate it:
+   .venv\Scripts\activate
+
+4. Install dependencies:
+   pip install -r requirements.txt
+
+   If you installed dependencies before email validation was added, run:
+   pip install email-validator
+
+5. Copy env template if needed:
+   copy .env.example .env
+
+6. Start API from src folder:
+   cd src
+   uvicorn main:app --reload
+
+7. Open docs:
+   http://127.0.0.1:8000/docs
+
+Notes
+-----
+- Make sure PostgreSQL is running.
+- Make sure DATABASE_URL points to your local rentzu database.
+- Current starter routes:
+  - /properties
+  - /units
+  - /renters
+  - /financial-records

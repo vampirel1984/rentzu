@@ -1,0 +1,40 @@
+Rentzu App Startup Guide
+========================
+
+Goal
+----
+Run the mobile client with Expo.
+
+1. Open terminal in:
+   D:\apps\rentzu\app
+
+2. Install dependencies:
+   npm install
+
+3. Start Expo:
+   npx expo start
+
+4. For Android testing:
+   press a in the Expo terminal
+   or scan QR with Expo Go if your environment supports it
+
+Important backend note
+----------------------
+The app currently calls:
+- http://127.0.0.1:8000/auth/request-code
+- http://127.0.0.1:8000/auth/verify-code
+
+So start the FastAPI server first from:
+- D:\apps\rentzu\server\src
+
+Current demo verification code
+------------------------------
+123456
+
+Current auth behavior
+---------------------
+- Enter email and password on the first screen
+- Option A: request verification code from server and verify it
+- Option B: tap `Enter local dev workspace` to create/get user + organization immediately for local product development
+- If the user does not exist yet, the local dev path bootstraps a starter user and individual organization automatically
+- If SMTP is not configured yet, the verification email is written to `D:\apps\rentzu\server\outbox\...json`

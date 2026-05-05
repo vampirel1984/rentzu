@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Yearly Portfolio Summary Mock</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #d97706;
+      --shadow: 0 10px 30px rgba(15,23,42,.08);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f7f9fc 34%, #f4f7fb 100%);
+      color: var(--text);
+    }
+    .phone { max-width: 430px; margin: 0 auto; min-height: 100vh; padding-bottom: 42px; }
+    .hero { padding: 20px 16px 12px; }
+    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .icon { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.8); box-shadow: 0 6px 18px rgba(37,99,235,.08); }
+    .eyebrow { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:8px; }
+    .title { font-size: 28px; font-weight: 800; line-height:1.05; letter-spacing:-.03em; }
+    .subtitle { margin-top:8px; color: var(--muted); font-size:13px; line-height:1.45; }
+    .section { padding: 16px; }
+    .card { background: var(--surface); border-radius: var(--radius); border:1px solid rgba(255,255,255,.8); box-shadow: var(--shadow); }
+    .filters { padding: 16px; display:grid; gap:12px; }
+    .filter-row { display:flex; gap:10px; flex-wrap: wrap; }
+    .filter-chip { padding:10px 12px; border-radius: 14px; background:#f8fafc; border:1px solid var(--line); font-size:12px; font-weight:700; color:#334155; }
+    .filter-chip.active { background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }
+    .summary { padding: 18px; }
+    .summary-top { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; }
+    .label { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:6px; }
+    .big { font-size:32px; font-weight:800; letter-spacing:-.04em; }
+    .mini { color: var(--muted); font-size:12px; margin-top:6px; }
+    .metrics { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
+    .metric { padding:14px; border-radius:18px; background:#f8fafc; border:1px solid var(--line); }
+    .metric .name { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:8px; }
+    .metric .value { font-size:20px; font-weight:800; }
+    .green { color: var(--green); } .red { color: var(--red); } .amber { color: var(--amber); }
+    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .section-title { font-size:17px; font-weight:800; }
+    .link { color: var(--primary); font-size:13px; font-weight:700; }
+    .property-list { display:grid; gap:12px; }
+    .property-card { padding: 16px; }
+    .property-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .property-name { font-size:16px; font-weight:800; }
+    .property-sub { font-size:12px; color: var(--muted); margin-top:5px; line-height:1.45; }
+    .property-net { font-size:18px; font-weight:800; white-space: nowrap; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px; }
+    .chip { background:#eef2ff; color:#3730a3; font-size:11px; font-weight:700; padding:6px 10px; border-radius:999px; }
+    .table { padding: 14px; }
+    .table-row { display:grid; grid-template-columns: 1.2fr .8fr .8fr .8fr; gap: 10px; padding: 12px 0; border-bottom:1px solid var(--line); font-size: 13px; }
+    .table-row:last-child { border-bottom:none; }
+    .table-head { color: var(--muted); font-weight:700; font-size:12px; }
+    .bottom-bar {
+      position: sticky; bottom: 10px; margin: 8px 16px 0; display:flex; justify-content:space-around;
+      background: rgba(255,255,255,.88); backdrop-filter: blur(12px); border-radius: 24px; padding: 12px 14px;
+      border:1px solid rgba(255,255,255,.8); box-shadow: 0 16px 34px rgba(15,23,42,.12);
+      font-size: 12px; font-weight:700;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:5px; color:#334155; }
+    .nav-item.active { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="hero">
+      <div class="top">
+        <div class="icon">←</div>
+        <div class="icon">⇩</div>
+      </div>
+      <div class="eyebrow">Yearly Summary · Portfolio</div>
+      <div class="title">2025 annual overview</div>
+      <div class="subtitle">See the whole portfolio first, then open each property’s yearly packet for detail.</div>
+    </div>
+
+    <div class="section">
+      <div class="card filters">
+        <div class="filter-row">
+          <div class="filter-chip active">2025</div>
+          <div class="filter-chip">2024</div>
+          <div class="filter-chip">2023</div>
+        </div>
+        <div class="filter-row">
+          <div class="filter-chip active">All properties</div>
+          <div class="filter-chip">Owner packet</div>
+          <div class="filter-chip">Accountant handoff</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card summary">
+        <div class="summary-top">
+          <div>
+            <div class="label">Portfolio net (2025)</div>
+            <div class="big">+$48,720</div>
+            <div class="mini">Portfolio-level yearly summary before drilling into each property.</div>
+          </div>
+          <div style="min-width:118px;padding:12px;border-radius:18px;background:#f8fafc;border:1px solid var(--line);">
+            <div class="label" style="margin-bottom:0;">Export</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">Portfolio PDF</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">CSV</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">Share</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="name">Income</div><div class="value green">$72,900</div></div>
+          <div class="metric"><div class="name">Expenses</div><div class="value red">$24,180</div></div>
+          <div class="metric"><div class="name">Properties</div><div class="value amber">3</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Property yearly packets</div>
+        <div class="link">Open all</div>
+      </div>
+      <div class="property-list">
+        <div class="card property-card">
+          <div class="property-top">
+            <div>
+              <div class="property-name">Elm Street Duplex</div>
+              <div class="property-sub">Income $26,400 · Expense $8,200 · Vacancy 41 days</div>
+            </div>
+            <div class="property-net green">+$18,200</div>
+          </div>
+          <div class="chips"><div class="chip">2 units</div><div class="chip">1 improvement</div><div class="chip">Open packet</div></div>
+        </div>
+
+        <div class="card property-card">
+          <div class="property-top">
+            <div>
+              <div class="property-name">Oak House</div>
+              <div class="property-sub">Income $18,000 · Expense $3,900 · Vacancy 0 days</div>
+            </div>
+            <div class="property-net green">+$14,100</div>
+          </div>
+          <div class="chips"><div class="chip">1 unit</div><div class="chip">No improvements</div><div class="chip">Open packet</div></div>
+        </div>
+
+        <div class="card property-card">
+          <div class="property-top">
+            <div>
+              <div class="property-name">Main Ave Fourplex</div>
+              <div class="property-sub">Income $28,500 · Expense $16,700 · Vacancy 18 days</div>
+            </div>
+            <div class="property-net green">+$11,800</div>
+          </div>
+          <div class="chips"><div class="chip">4 units</div><div class="chip">2 improvements</div><div class="chip">Open packet</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Quick compare</div>
+        <div class="link">See more</div>
+      </div>
+      <div class="card table">
+        <div class="table-row table-head">
+          <div>Property</div><div>Income</div><div>Expense</div><div>Net</div>
+        </div>
+        <div class="table-row">
+          <div>Elm Street</div><div class="green">$26,400</div><div class="red">$8,200</div><div>$18,200</div>
+        </div>
+        <div class="table-row">
+          <div>Oak House</div><div class="green">$18,000</div><div class="red">$3,900</div><div>$14,100</div>
+        </div>
+        <div class="table-row">
+          <div>Main Ave</div><div class="green">$28,500</div><div class="red">$16,700</div><div>$11,800</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="nav-item"><div>🏠</div><div>Home</div></div>
+      <div class="nav-item"><div>📁</div><div>Properties</div></div>
+      <div class="nav-item"><div>🎤</div><div>Voice</div></div>
+      <div class="nav-item active"><div>📊</div><div>Reports</div></div>
+    </div>
+  </div>
+</body>
+</html>

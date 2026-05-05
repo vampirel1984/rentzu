@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Pricing Mock</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #dbe5f1;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --green: #16a34a;
+      --shadow: 0 18px 48px rgba(15,23,42,.12);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #eaf2ff 0%, #f6f9ff 38%, #f2f6fb 100%);
+      color: var(--text);
+    }
+    .device {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 10px 12px 28px;
+    }
+    .screen {
+      min-height: calc(100vh - 20px);
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, #f8fbff 100%);
+      border: 1px solid rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+      border-radius: 36px;
+      overflow: hidden;
+      padding: 14px 16px 24px;
+    }
+    .statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .avatar, .tag {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 8px 20px rgba(37,99,235,.08);
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--primary-dark);
+    }
+    .avatar { width: 42px; padding: 0; font-size: 20px; }
+    .eyebrow { font-size: 12px; color: var(--muted); font-weight: 800; margin-bottom: 8px; }
+    .title { font-size: 30px; font-weight: 800; line-height: 1.04; letter-spacing: -.04em; margin: 0; }
+    .subtitle { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .section { margin-top: 16px; }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(219,229,241,.9);
+      box-shadow: 0 10px 24px rgba(15,23,42,.06);
+    }
+    .summary {
+      padding: 18px;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border: 1px solid #dbeafe;
+    }
+    .label { color: var(--muted); font-size: 12px; font-weight: 800; margin-bottom: 6px; }
+    .headline { font-size: 30px; font-weight: 800; letter-spacing: -.04em; }
+    .note { font-size: 13px; color: var(--muted); line-height: 1.5; margin-top: 6px; }
+    .mini-pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 9px 12px;
+      background: #fff;
+      border: 1px solid #dbeafe;
+      color: var(--primary-dark);
+      font-size: 11px;
+      font-weight: 800;
+      margin-top: 12px;
+    }
+    .plans { display: grid; gap: 12px; }
+    .plan { padding: 16px; }
+    .plan.primary {
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border: 1px solid #bfdbfe;
+    }
+    .plan.dark {
+      background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
+      color: #fff;
+      border: 1px solid rgba(59,130,246,.15);
+    }
+    .plan.dark .desc,
+    .plan.dark .feature,
+    .plan.dark .price-sub { color: rgba(255,255,255,.8); }
+    .plan-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .plan-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .plan-name { font-size: 18px; font-weight: 800; }
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(37,99,235,.08);
+      color: var(--primary-dark);
+      border: 1px solid #dbeafe;
+    }
+    .plan.dark .badge {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      border-color: rgba(255,255,255,.12);
+    }
+    .desc { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .price { font-size: 32px; font-weight: 800; letter-spacing: -.04em; text-align: right; }
+    .price-sub { font-size: 12px; color: var(--muted); font-weight: 800; text-align: right; }
+    .features { display: grid; gap: 10px; margin-top: 16px; }
+    .feature { display: flex; gap: 10px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .check { color: var(--green); font-weight: 900; }
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 15px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+    .button.soft { background: #eff6ff; color: var(--primary-dark); }
+    .button.primary {
+      background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 14px 24px rgba(37,99,235,.22);
+    }
+    .button.dark {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.16);
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <div class="screen">
+      <div class="statusbar">
+        <div>9:41</div>
+        <div>◔◔◔ 100%</div>
+      </div>
+
+      <div class="top">
+        <div class="avatar">💳</div>
+        <div class="tag">Simple pricing</div>
+      </div>
+
+      <div class="eyebrow">Built for small landlords</div>
+      <h1 class="title">Start free, then pay only when you add properties</h1>
+      <div class="subtitle">Keep pricing simple for MVP. Your first property is free. Each additional property is just $1 per month.</div>
+
+      <div class="section">
+        <div class="card summary">
+          <div class="label">MVP pricing model</div>
+          <div class="headline">1st property free</div>
+          <div class="note">Then $1 per month for every additional property. Multi-unit properties can count as more than one property based on unit bands.</div>
+          <div class="mini-pill">Property-first billing</div>
+        </div>
+      </div>
+
+      <div class="section plans">
+        <div class="card plan">
+          <div class="plan-top">
+            <div>
+              <div class="plan-name-row">
+                <div class="plan-name">Starter</div>
+                <div class="badge">Best to start</div>
+              </div>
+              <div class="desc">Perfect for landlords trying Rentzu with the first property.</div>
+            </div>
+            <div>
+              <div class="price">$0</div>
+              <div class="price-sub">/month</div>
+            </div>
+          </div>
+          <div class="features">
+            <div class="feature"><span class="check">✓</span><span>1 property included free</span></div>
+            <div class="feature"><span class="check">✓</span><span>Portfolio dashboard and property overview</span></div>
+            <div class="feature"><span class="check">✓</span><span>Hands-free voice capture</span></div>
+            <div class="feature"><span class="check">✓</span><span>Basic year-end export prep</span></div>
+          </div>
+          <button class="button soft">Start free</button>
+        </div>
+
+        <div class="card plan primary">
+          <div class="plan-top">
+            <div>
+              <div class="plan-name-row">
+                <div class="plan-name">Growth</div>
+                <div class="badge">Recommended</div>
+              </div>
+              <div class="desc">Simple expansion pricing as your rental portfolio grows.</div>
+            </div>
+            <div>
+              <div class="price">$1</div>
+              <div class="price-sub">/extra property</div>
+            </div>
+          </div>
+          <div class="features">
+            <div class="feature"><span class="check">✓</span><span>Each additional property is $1 per month</span></div>
+            <div class="feature"><span class="check">✓</span><span>Property and unit drill-down views</span></div>
+            <div class="feature"><span class="check">✓</span><span>Accountant-ready export package</span></div>
+            <div class="feature"><span class="check">✓</span><span>Maintenance issues and reminders</span></div>
+          </div>
+          <button class="button primary">Choose growth</button>
+        </div>
+
+        <div class="card plan dark">
+          <div class="plan-top">
+            <div>
+              <div class="plan-name-row">
+                <div class="plan-name">Concierge</div>
+                <div class="badge">Talk to us</div>
+              </div>
+              <div class="desc">For larger portfolios that want onboarding help and tailored setup.</div>
+            </div>
+            <div>
+              <div class="price">Custom</div>
+              <div class="price-sub">pricing</div>
+            </div>
+          </div>
+          <div class="features">
+            <div class="feature"><span class="check">✓</span><span>Bulk property onboarding support</span></div>
+            <div class="feature"><span class="check">✓</span><span>Migration and import help</span></div>
+            <div class="feature"><span class="check">✓</span><span>Priority support and product feedback</span></div>
+            <div class="feature"><span class="check">✓</span><span>Advanced reporting access</span></div>
+          </div>
+          <button class="button dark">Contact us</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Rentzu",
+    "slug": "rentzu-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#eef4ff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.rentzu.app"
+    },
+    "ios": {
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Rentzu uses the microphone so you can speak rent and expense records for transcription."
+      }
+    },
+    "extra": {},
+    "plugins": [
+      "expo-secure-store"
+    ]
+  }
+}

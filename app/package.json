@@ -1,0 +1,28 @@
+{
+  "name": "rentzu-app",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/datetimepicker": "8.0.1",
+    "@types/react": "~18.2.79",
+    "expo": "~51.0.28",
+    "expo-av": "~14.0.7",
+    "expo-file-system": "~17.0.1",
+    "expo-secure-store": "~13.0.2",
+    "expo-sharing": "^55.0.18",
+    "expo-status-bar": "~1.12.1",
+    "react": "18.2.0",
+    "react-native": "0.74.5",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-svg": "^15.15.4",
+    "typescript": "~5.3.3"
+  }
+}

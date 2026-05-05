@@ -1,0 +1,121 @@
+Rentzu Backend Framework List
+=============================
+
+Project goal
+------------
+Generate a practical FastAPI backend skeleton that matches the current Rentzu MVP direction:
+- mobile-app-first product
+- property-first data model
+- voice/manual financial record ingestion
+- tax-ready and accountant-ready reporting later
+
+Current backend stack direction
+-------------------------------
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Pydantic
+
+Database direction
+------------------
+Current schema already exists in PostgreSQL and is suitable as MVP foundation.
+Key tables currently relevant:
+- organizations
+- users
+- properties
+- units
+- renters
+- financial_records
+
+Tables kept in schema but not prioritized for first API pass:
+- leases
+- lease_renters
+- raw_entries
+- extracted_financial_records
+- activity_log
+
+MVP backend architecture decisions
+----------------------------------
+1. PATCH is required.
+   Reason: property, unit, renter, and financial record data will be edited frequently.
+
+2. Lease APIs are not first priority.
+   Reason: lease workflow is not yet central to the current MVP path.
+   We keep lease models in schema, but router generation can wait.
+
+3. User exists as login identity, but full user management is not first priority.
+   Reason: once the user logs in, backend can treat that identity as the current user.
+   The database should still keep the users table because created_by and audit trails depend on it.
+   User naming should use first_name and last_name instead of only full_name.
+
+4. Organization should represent business/entity context.
+   Reason: a login user is not the same thing as ownership/tax entity.
+   A user may represent an individual or an LLC.
+   Keep the organization_users mapping table for future multi-user/multi-owner support.
+   Organizations should include entity_type, such as:
+   - individual
+   - llc
+
+5. Property is the primary business dimension.
+   Unit is secondary and optional where appropriate.
+   This matches reporting, tax-ready summaries, and landlord workflows.
+
+Initial code generation scope
+-----------------------------
+Generate code under:
+- D:\apps\rentzu\src
+
+Suggested structure:
+- main.py
+- db.py
+- dependencies.py
+- models/
+- schemas/
+- routers/
+- services/
+
+Initial routers to generate
+---------------------------
+Priority resources:
+- properties
+- units
+- renters
+- financial_records
+
+For these resources, support:
+- GET
+- POST
+- PATCH
+
+Support models to include
+-------------------------
+- Organization
+- User
+- Property
+- Unit
+- Renter
+- FinancialRecord
+
+Design assumptions for first pass
+---------------------------------
+- Authentication can be simplified at first.
+- Backend may assume a current user/current organization placeholder until full auth is added.
+- Router/service code should be easy to extend later.
+- Strong organization consistency checks should live in service layer.
+
+Important implementation notes
+------------------------------
+- Do not overbuild lease workflow yet.
+- Do not overbuild user management yet.
+- Keep category_code and sub_type simple for now.
+- Leave room for future AI extraction pipeline integration.
+- Prefer clean CRUD/service layering over direct table exposure.
+
+Future follow-up items
+----------------------
+- Add auth integration
+- Add organization entity_type = individual / llc
+- Add raw_entries and extracted_financial_records APIs
+- Add lease APIs if the product starts using them heavily
+- Add stronger cross-organization validation at DB and service levels

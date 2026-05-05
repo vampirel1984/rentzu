@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Property Year Summary Mock</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #d97706;
+      --shadow: 0 10px 30px rgba(15,23,42,.08);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f7f9fc 34%, #f4f7fb 100%);
+      color: var(--text);
+    }
+    .phone { max-width: 430px; margin: 0 auto; min-height: 100vh; padding-bottom: 42px; }
+    .hero { padding: 20px 16px 12px; }
+    .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .icon { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.8); box-shadow: 0 6px 18px rgba(37,99,235,.08); }
+    .eyebrow { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:8px; }
+    .title { font-size: 28px; font-weight: 800; line-height:1.05; letter-spacing:-.03em; }
+    .subtitle { margin-top:8px; color: var(--muted); font-size:13px; line-height:1.45; }
+    .section { padding: 16px; }
+    .card { background: var(--surface); border-radius: var(--radius); border:1px solid rgba(255,255,255,.8); box-shadow: var(--shadow); }
+    .summary { padding: 18px; }
+    .summary-top { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; }
+    .label { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:6px; }
+    .big { font-size:32px; font-weight:800; letter-spacing:-.04em; }
+    .mini { color: var(--muted); font-size:12px; margin-top:6px; }
+    .metrics { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:14px; }
+    .metric { padding:14px; border-radius:18px; background:#f8fafc; border:1px solid var(--line); }
+    .metric .name { font-size:12px; color: var(--muted); font-weight:700; margin-bottom:8px; }
+    .metric .value { font-size:20px; font-weight:800; }
+    .green { color: var(--green); } .red { color: var(--red); } .amber { color: var(--amber); }
+    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .section-title { font-size:17px; font-weight:800; }
+    .link { color: var(--primary); font-size:13px; font-weight:700; }
+    .table { padding: 14px; }
+    .table-row { display:grid; grid-template-columns: 1.3fr .9fr; gap: 10px; padding: 12px 0; border-bottom:1px solid var(--line); font-size: 13px; }
+    .table-row:last-child { border-bottom:none; }
+    .table-head { color: var(--muted); font-weight:700; font-size:12px; }
+    .note-card { padding: 15px; }
+    .note-title { font-size: 15px; font-weight: 700; }
+    .note-sub { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px; }
+    .chip { background:#eef2ff; color:#3730a3; font-size:11px; font-weight:700; padding:6px 10px; border-radius:999px; }
+    .bottom-bar {
+      position: sticky; bottom: 10px; margin: 8px 16px 0; display:flex; justify-content:space-around;
+      background: rgba(255,255,255,.88); backdrop-filter: blur(12px); border-radius: 24px; padding: 12px 14px;
+      border:1px solid rgba(255,255,255,.8); box-shadow: 0 16px 34px rgba(15,23,42,.12);
+      font-size: 12px; font-weight:700;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:5px; color:#334155; }
+    .nav-item.active { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="hero">
+      <div class="top">
+        <div class="icon">←</div>
+        <div class="icon">⇩</div>
+      </div>
+      <div class="eyebrow">Yearly Summary · 2025</div>
+      <div class="title">Elm Street Duplex</div>
+      <div class="subtitle">Annual property packet for review, export, and tax preparation. Property-first, with units only as supporting detail.</div>
+    </div>
+
+    <div class="section">
+      <div class="card summary">
+        <div class="summary-top">
+          <div>
+            <div class="label">Property net (2025)</div>
+            <div class="big">+$18,200</div>
+            <div class="mini">This is the yearly property view you can review before export or accountant handoff.</div>
+          </div>
+          <div style="min-width:118px;padding:12px;border-radius:18px;background:#f8fafc;border:1px solid var(--line);">
+            <div class="label" style="margin-bottom:0;">Export</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">PDF packet</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">CSV</div>
+            <div style="font-size:12px;color:#334155;margin-top:8px;font-weight:700;">Share</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="name">Income</div><div class="value green">$26,400</div></div>
+          <div class="metric"><div class="name">Expenses</div><div class="value red">$8,200</div></div>
+          <div class="metric"><div class="name">Vacancy days</div><div class="value amber">41</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Property info</div>
+        <div class="link">Edit</div>
+      </div>
+      <div class="card table">
+        <div class="table-row"><div>Address</div><div>123 Elm Street, Rochester, NY</div></div>
+        <div class="table-row"><div>Property type</div><div>Duplex</div></div>
+        <div class="table-row"><div>Placed in service</div><div>2022-06-01</div></div>
+        <div class="table-row"><div>Units</div><div>2</div></div>
+        <div class="table-row"><div>Ownership</div><div>100%</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Year summary</div>
+        <div class="link">Open details</div>
+      </div>
+      <div class="card table">
+        <div class="table-row"><div>Gross rent collected</div><div>$24,000</div></div>
+        <div class="table-row"><div>Late fees / other income</div><div>$2,400</div></div>
+        <div class="table-row"><div>Total insurance</div><div>$2,100</div></div>
+        <div class="table-row"><div>Total repairs</div><div>$2,450</div></div>
+        <div class="table-row"><div>Utilities</div><div>$1,380</div></div>
+        <div class="table-row"><div>Property taxes</div><div>$1,720</div></div>
+        <div class="table-row"><div>Cleaning / turnover</div><div>$550</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Usage & occupancy</div>
+        <div class="link">View timeline</div>
+      </div>
+      <div class="card table">
+        <div class="table-row"><div>Rental days</div><div>324</div></div>
+        <div class="table-row"><div>Vacancy days</div><div>41</div></div>
+        <div class="table-row"><div>Personal use days</div><div>0</div></div>
+        <div class="table-row"><div>Units occupied now</div><div>1 / 2</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Improvements</div>
+        <div class="link">See all</div>
+      </div>
+      <div class="card note-card">
+        <div class="note-title">Water heater replacement</div>
+        <div class="note-sub">Tracked separately from routine repair. Keep the placed-in-service date for depreciation / capital treatment review.</div>
+        <div class="chips">
+          <div class="chip">Date: 2025-03-14</div>
+          <div class="chip">Amount: $1,850</div>
+          <div class="chip">Status: Capital improvement</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Review notes</div>
+        <div class="link">Add note</div>
+      </div>
+      <div class="card note-card">
+        <div class="note-title">Ready for year-end review</div>
+        <div class="note-sub">This packet is organized at the property level so the owner or accountant can review one property at a time without mixing unit detail into the main report.</div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="nav-item"><div>🏠</div><div>Home</div></div>
+      <div class="nav-item"><div>📁</div><div>Properties</div></div>
+      <div class="nav-item"><div>🎤</div><div>Voice</div></div>
+      <div class="nav-item active"><div>📊</div><div>Reports</div></div>
+    </div>
+  </div>
+</body>
+</html>

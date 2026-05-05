@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rentzu - Property Detail Mock</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #2563eb;
+      --primary-2: #1d4ed8;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #d97706;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f7f9fc 28%, #f3f6fb 100%);
+      color: var(--text);
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: transparent;
+      padding-bottom: 42px;
+    }
+
+    .hero {
+      padding: 20px 18px 14px;
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,.22), transparent 34%),
+        radial-gradient(circle at top left, rgba(14,165,233,.15), transparent 28%);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.55);
+      background: rgba(255,255,255,.65);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e3a8a;
+      font-size: 18px;
+      box-shadow: 0 4px 16px rgba(37,99,235,.08);
+    }
+
+    .crumb {
+      color: #334155;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      opacity: .78;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.45;
+      max-width: 260px;
+    }
+
+    .status-pill {
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(255,255,255,.7);
+      backdrop-filter: blur(10px);
+      padding: 10px 12px;
+      border-radius: 16px;
+      text-align: right;
+      min-width: 112px;
+      box-shadow: 0 8px 24px rgba(37,99,235,.08);
+    }
+
+    .status-pill .big {
+      display: block;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .status-pill .small {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      margin: 0 16px;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .summary-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .net-value {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .mini-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .health {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px 14px;
+      min-width: 122px;
+    }
+
+    .health .line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .metric-box {
+      padding: 14px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .metric-box .name {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .metric-box .value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .amber { color: var(--amber); }
+
+    .section {
+      padding: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .section-link {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .voice-card {
+      padding: 16px;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border: 1px solid #dbeafe;
+    }
+
+    .voice-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .voice-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .voice-sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+
+    .mic {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-2) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 18px 28px rgba(37, 99, 235, 0.28);
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .quick-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 14px 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .quick-btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .quick-btn.ghost {
+      background: white;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+    }
+
+    .hints {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .hint {
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid #dbeafe;
+      font-size: 12px;
+      color: #334155;
+    }
+
+    .records {
+      display: grid;
+      gap: 12px;
+    }
+
+    .record {
+      padding: 15px;
+    }
+
+    .record-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .record-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .record-meta {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .record-amount {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    .unit-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .unit-card {
+      padding: 15px;
+    }
+
+    .unit-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .unit-name {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .unit-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .unit-rent {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .bottom-bar {
+      position: sticky;
+      bottom: 10px;
+      margin: 8px 16px 0;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 24px;
+      padding: 12px 14px;
+      box-shadow: 0 16px 34px rgba(15,23,42,.12);
+      display: flex;
+      justify-content: space-around;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="hero">
+      <div class="topbar">
+        <div class="icon-btn">←</div>
+        <div class="icon-btn">⋯</div>
+      </div>
+
+      <div class="crumb">Properties / Rochester Portfolio</div>
+      <div class="title-row">
+        <div>
+          <h1 class="title">Elm Street Duplex</h1>
+          <div class="subtitle">
+            Property-first financial view for small landlords. Voice-first capture starts right here.
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="big">2 units</span>
+          <span class="small">1 occupied · 1 vacant</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-card card">
+      <div class="summary-top">
+        <div>
+          <div class="label">Net this month</div>
+          <div class="net-value">+$1,915</div>
+          <div class="mini-note">Property-level summary comes first. Unit details are drill-down only.</div>
+        </div>
+        <div class="health">
+          <div class="label" style="margin-bottom:0;">Health</div>
+          <div class="line"><span>Cash flow</span><strong class="green">Healthy</strong></div>
+          <div class="line"><span>Collections</span><strong>On track</strong></div>
+          <div class="line"><span>Open issues</span><strong class="amber">1 pending</strong></div>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-box">
+          <div class="name">Income</div>
+          <div class="value green">$2,400</div>
+        </div>
+        <div class="metric-box">
+          <div class="name">Expenses</div>
+          <div class="value red">$485</div>
+        </div>
+        <div class="metric-box">
+          <div class="name">Occupancy</div>
+          <div class="value amber">50%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card voice-card">
+        <div class="voice-top">
+          <div>
+            <div class="voice-title">Add record by voice</div>
+            <div class="voice-sub">
+              Tap once and say: “Unit 2 toilet repair 85 dollars” or “Received April rent 1200 from Bob”.
+            </div>
+          </div>
+          <div class="mic">🎤</div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-btn primary">Start voice capture</button>
+          <button class="quick-btn ghost">Add manually</button>
+        </div>
+
+        <div class="hints">
+          <div class="hint">Voice flow: audio → transcription → structured draft → confirm → save to financial records.</div>
+          <div class="hint">Mapping rule: always resolve property first, then optionally add unit.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Recent records</div>
+        <div class="section-link">See all</div>
+      </div>
+
+      <div class="records">
+        <div class="record card">
+          <div class="record-row">
+            <div>
+              <div class="record-title">April rent payment</div>
+              <div class="record-meta">Bob Smith · Unit 1 · Apr 1 · Mapped to property + unit</div>
+            </div>
+            <div class="record-amount green">+$1,200</div>
+          </div>
+          <div class="pills">
+            <div class="pill">Income</div>
+            <div class="pill">Unit-level</div>
+          </div>
+        </div>
+
+        <div class="record card">
+          <div class="record-row">
+            <div>
+              <div class="record-title">Toilet repair</div>
+              <div class="record-meta">Mike Plumbing · Unit 2 · Apr 6 · Voice-added</div>
+            </div>
+            <div class="record-amount red">-$85</div>
+          </div>
+          <div class="pills">
+            <div class="pill">Expense</div>
+            <div class="pill">Unit-level</div>
+          </div>
+        </div>
+
+        <div class="record card">
+          <div class="record-row">
+            <div>
+              <div class="record-title">Property insurance</div>
+              <div class="record-meta">State Farm · Whole property · Apr 3</div>
+            </div>
+            <div class="record-amount red">-$400</div>
+          </div>
+          <div class="pills">
+            <div class="pill">Expense</div>
+            <div class="pill">Property-level</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Units</div>
+        <div class="section-link">Manage</div>
+      </div>
+
+      <div class="unit-grid">
+        <div class="unit-card card">
+          <div class="unit-top">
+            <div>
+              <div class="unit-name">Unit 1</div>
+              <div class="unit-sub">Occupied · Bob Smith</div>
+            </div>
+            <div class="unit-rent">$1,200/mo</div>
+          </div>
+        </div>
+
+        <div class="unit-card card">
+          <div class="unit-top">
+            <div>
+              <div class="unit-name">Unit 2</div>
+              <div class="unit-sub">Vacant · Last event: repair logged</div>
+            </div>
+            <div class="unit-rent" style="color:var(--muted)">Vacant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="nav-item"><div>🏠</div><div>Home</div></div>
+      <div class="nav-item active"><div>📁</div><div>Properties</div></div>
+      <div class="nav-item"><div>🎤</div><div>Voice</div></div>
+      <div class="nav-item"><div>📊</div><div>Reports</div></div>
+    </div>
+  </div>
+</body>
+</html>
