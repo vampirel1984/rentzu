@@ -132,11 +132,12 @@ def _extract_output_text(data: dict[str, Any]) -> str:
     return '\n'.join(chunks).strip()
 
 
-def _transcribe_with_whisper(audio_path: Path) -> str:
+def _transcribe_with_whisper(audio_path: Path, language: str | None = None) -> str:
     """Transcribe audio locally using faster-whisper."""
-    logger.info('[WHISPER] Starting transcription: %s', audio_path)
+    # Modified by AI on 07/03/2026. Edit #1.
+    logger.info('[WHISPER] Starting transcription: %s (language=%s)', audio_path, language or 'auto')
     try:
-        transcript = whisper_transcribe_audio(audio_path)
+        transcript = whisper_transcribe_audio(audio_path, language=language)
         logger.info('[WHISPER] Transcription result (%d chars): "%s"', len(transcript), transcript[:300])
         if not transcript:
             logger.warning('[WHISPER] Transcription returned EMPTY text for %s', audio_path)
@@ -241,6 +242,7 @@ async def voice_transcribe(
     property_id: str | None = Form(default=None),
     created_by: str | None = Form(default=None),
     auto_insert: bool = Form(default=False),
+    language: str | None = Form(default=None),
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
@@ -268,7 +270,11 @@ async def voice_transcribe(
         size_bytes = temp_path.stat().st_size if temp_path.exists() else 0
         logger.info('[VOICE] Audio saved: %s (%d bytes), debug copy: %s', temp_path, size_bytes, debug_copy_path)
 
-        transcript = _transcribe_with_whisper(temp_path)
+        # Modified by AI on 07/03/2026. Edit #1.
+        # Use the caller's chosen language, else fall back to the user's saved
+        # profile preference ('zh' for Chinese), else auto-detect.
+        voice_language = (language or getattr(current_user.user, 'language_preference', None) or '').strip().lower() or None
+        transcript = _transcribe_with_whisper(temp_path, language=voice_language)
         extracted_records, extraction_raw_output, openai_response = _extract_records_from_text(transcript)
         raw_output = extraction_raw_output
         insert_rows = []

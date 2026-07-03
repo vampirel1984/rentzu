@@ -14,5 +14,8 @@ class User(Base):
     last_name = Column(Text, nullable=False)
     password_hash = Column(Text)
     email_verified_at = Column(DateTime(timezone=True))
+    # Modified by AI on 07/03/2026. Edit #1.
+    # User's preferred app language: 'en' (English) or 'zh' (Chinese).
+    language_preference = Column(Text, nullable=False, server_default='en', default='en')
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

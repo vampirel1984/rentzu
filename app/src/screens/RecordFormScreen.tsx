@@ -1,9 +1,11 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import { createFinancialRecord, FinancialRecord, FinancialRecordPayload, updateFinancialRecord } from '../services/financialRecords';
 import { Property } from '../services/properties';
+import { colors } from '../theme/tokens';
 
 const TYPE_OPTIONS = ['expense', 'income'] as const;
 const INCOME_CATEGORY_OPTIONS = [
@@ -252,7 +254,7 @@ export default function RecordFormScreen({ organizationId, selectedProperty, sel
               <Text style={styles.fieldLabel}>Amount</Text>
               <TextInput style={styles.input} value={recordForm.amount}
                 onChangeText={(v) => setRecordForm((p) => ({ ...p, amount: v }))}
-                keyboardType="decimal-pad" placeholder="1250.00" placeholderTextColor="#4b5563" />
+                keyboardType="decimal-pad" placeholder="1250.00" placeholderTextColor={colors.textFaint} />
             </View>
             <View style={[styles.half, styles.leftSpacing]}>
               <Text style={styles.fieldLabel}>Date</Text>
@@ -294,17 +296,17 @@ export default function RecordFormScreen({ organizationId, selectedProperty, sel
           <Text style={styles.fieldLabel}>Description</Text>
           <TextInput style={styles.input} value={recordForm.description}
             onChangeText={(v) => setRecordForm((p) => ({ ...p, description: v }))}
-            placeholder="Roof repair" placeholderTextColor="#4b5563" />
+            placeholder="Roof repair" placeholderTextColor={colors.textFaint} />
 
           <Text style={styles.fieldLabel}>Counterparty</Text>
           <TextInput style={styles.input} value={recordForm.counterparty}
             onChangeText={(v) => setRecordForm((p) => ({ ...p, counterparty: v }))}
-            placeholder="Vendor / tenant" placeholderTextColor="#4b5563" />
+            placeholder="Vendor / tenant" placeholderTextColor={colors.textFaint} />
 
           <Text style={styles.fieldLabel}>Notes</Text>
           <TextInput style={[styles.input, styles.textArea]} value={recordForm.notes}
             onChangeText={(v) => setRecordForm((p) => ({ ...p, notes: v }))}
-            multiline placeholder="Optional notes" placeholderTextColor="#4b5563" />
+            multiline placeholder="Optional notes" placeholderTextColor={colors.textFaint} />
 
           <Pressable style={[styles.primaryButton, saving && styles.buttonDisabled]} onPress={handleSave} disabled={saving}>
             <Text style={styles.primaryButtonText}>{saving ? 'Saving...' : isEditing ? 'Save transaction' : 'Create transaction'}</Text>
@@ -316,7 +318,7 @@ export default function RecordFormScreen({ organizationId, selectedProperty, sel
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   content: { padding: 20, paddingBottom: 40 },
   header: {
     flexDirection: 'row',
@@ -329,73 +331,73 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backArrow: { color: '#f1f5f9', fontSize: 18, fontWeight: '700' },
-  headerTitle: { color: '#f1f5f9', fontSize: 20, fontWeight: '800' },
+  backArrow: { color: colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  headerTitle: { color: colors.textPrimary, fontSize: 20, fontWeight: '800' },
   card: {
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 24,
     padding: 18,
     marginTop: 8,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  helper: { color: '#94a3b8', fontSize: 13, lineHeight: 20, marginBottom: 4 },
-  fieldLabel: { color: '#94a3b8', fontSize: 12, fontWeight: '700', marginTop: 14, marginBottom: 8 },
+  helper: { color: colors.textSecondary, fontSize: 13, lineHeight: 20, marginBottom: 4 },
+  fieldLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '700', marginTop: 14, marginBottom: 8 },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 14,
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   textArea: { minHeight: 88, textAlignVertical: 'top' },
   row: { flexDirection: 'row' },
   half: { flex: 1 },
   leftSpacing: { marginLeft: 12 },
   optionRow: { marginTop: 6, flexGrow: 0 },
-  scopeHelper: { color: '#3b82f6', fontSize: 12, fontWeight: '700', marginTop: 8, lineHeight: 18 },
+  scopeHelper: { color: colors.accent, fontSize: 12, fontWeight: '700', marginTop: 8, lineHeight: 18 },
   optionChip: {
-    backgroundColor: 'rgba(59,130,246,0.12)',
+    backgroundColor: colors.accentChip,
     paddingHorizontal: 12,
     paddingVertical: 9,
     borderRadius: 16,
     marginRight: 8,
     marginBottom: 2,
     borderWidth: 1,
-    borderColor: 'rgba(59,130,246,0.25)',
+    borderColor: colors.accentBorder,
   },
-  optionChipActive: { backgroundColor: '#3b82f6', borderColor: '#3b82f6' },
-  optionChipText: { color: '#3b82f6', fontWeight: '700', fontSize: 12 },
-  optionChipTextActive: { color: '#fff' },
+  optionChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  optionChipText: { color: colors.accent, fontWeight: '700', fontSize: 12 },
+  optionChipTextActive: { color: colors.onAccent },
   primaryButton: {
     marginTop: 22,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.accent,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
   },
-  primaryButtonText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  primaryButtonText: { color: colors.onAccent, fontWeight: '800', fontSize: 15 },
   buttonDisabled: { opacity: 0.6 },
-  error: { color: '#ef4444', marginTop: 8, marginBottom: 4, fontSize: 13, fontWeight: '700' },
+  error: { color: colors.expense, marginTop: 8, marginBottom: 4, fontSize: 13, fontWeight: '700' },
   dateButton: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
-  dateButtonText: { fontSize: 14, color: '#f1f5f9', fontWeight: '600' },
+  dateButtonText: { fontSize: 14, color: colors.textPrimary, fontWeight: '600' },
   dropdownButton: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -403,21 +405,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
-  dropdownButtonText: { fontSize: 14, color: '#f1f5f9', fontWeight: '600', flex: 1 },
-  dropdownPlaceholder: { color: '#4b5563' },
-  dropdownCaret: { color: '#64748b', fontSize: 12, fontWeight: '800', marginLeft: 12 },
+  dropdownButtonText: { fontSize: 14, color: colors.textPrimary, fontWeight: '600', flex: 1 },
+  dropdownPlaceholder: { color: colors.textFaint },
+  dropdownCaret: { color: colors.textMuted, fontSize: 12, fontWeight: '800', marginLeft: 12 },
   dropdownMenu: {
     marginTop: 8,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
     borderRadius: 16,
     padding: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   dropdownItem: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11 },
-  dropdownItemActive: { backgroundColor: 'rgba(59,130,246,0.15)' },
-  dropdownItemText: { color: '#f1f5f9', fontSize: 14, fontWeight: '600' },
-  dropdownItemTextActive: { color: '#3b82f6', fontWeight: '800' },
+  dropdownItemActive: { backgroundColor: colors.accentSoft },
+  dropdownItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: '600' },
+  dropdownItemTextActive: { color: colors.accent, fontWeight: '800' },
 });

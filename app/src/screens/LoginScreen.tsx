@@ -1,8 +1,10 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useState } from 'react';
 import { Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AuthResponse, createDevSession, requestCode } from '../services/auth';
 import { saveSession, setAccessToken } from '../services/api';
+import { colors } from '../theme/tokens';
 
 const logoImage = require('../../assets/logo_1.png');
 
@@ -89,7 +91,7 @@ export default function LoginScreen({ onSuccess }: Props) {
           importantForAutofill="no"
           keyboardType="email-address"
           placeholder="you@example.com"
-          placeholderTextColor="#4b5563"
+          placeholderTextColor={colors.textFaint}
         />
 
         <Text style={styles.fieldLabel}>Password</Text>
@@ -103,7 +105,7 @@ export default function LoginScreen({ onSuccess }: Props) {
           textContentType="none"
           importantForAutofill="no"
           placeholder="Create or enter your password"
-          placeholderTextColor="#4b5563"
+          placeholderTextColor={colors.textFaint}
           returnKeyType="done"
           onSubmitEditing={handleLogin}
           blurOnSubmit
@@ -125,7 +127,7 @@ export default function LoginScreen({ onSuccess }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a', padding: 20 },
+  container: { flex: 1, backgroundColor: colors.background, padding: 20 },
   logoWrap: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -138,57 +140,57 @@ const styles = StyleSheet.create({
     height: 42,
   },
   pill: {
-    backgroundColor: 'rgba(59,130,246,0.15)',
+    backgroundColor: colors.accentSoft,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'rgba(59,130,246,0.3)',
+    borderColor: colors.accentBorderStrong,
   },
-  pillText: { color: '#3b82f6', fontWeight: '800', fontSize: 12 },
-  eyebrow: { color: '#64748b', fontSize: 12, fontWeight: '700', marginBottom: 8 },
-  title: { fontSize: 28, fontWeight: '900', color: '#f1f5f9', lineHeight: 34 },
-  subtitle: { color: '#94a3b8', fontSize: 14, lineHeight: 21, marginTop: 10 },
+  pillText: { color: colors.accent, fontWeight: '800', fontSize: 12 },
+  eyebrow: { color: colors.textMuted, fontSize: 12, fontWeight: '700', marginBottom: 8 },
+  title: { fontSize: 28, fontWeight: '900', color: colors.textPrimary, lineHeight: 34 },
+  subtitle: { color: colors.textSecondary, fontSize: 14, lineHeight: 21, marginTop: 10 },
   card: {
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 24,
     padding: 20,
     marginTop: 24,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  label: { color: '#64748b', fontSize: 12, fontWeight: '700', marginBottom: 6 },
-  cardTitle: { fontSize: 22, fontWeight: '800', color: '#f1f5f9', marginBottom: 14 },
-  fieldLabel: { color: '#94a3b8', fontSize: 12, fontWeight: '700', marginBottom: 8, marginTop: 10 },
+  label: { color: colors.textMuted, fontSize: 12, fontWeight: '700', marginBottom: 6 },
+  cardTitle: { fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 14 },
+  fieldLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8, marginTop: 10 },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 15,
     fontSize: 14,
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   primaryButton: {
     marginTop: 18,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.accent,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
   },
-  primaryButtonText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  primaryButtonText: { color: colors.onAccent, fontWeight: '800', fontSize: 15 },
   secondaryButton: {
     marginTop: 10,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: colors.borderStrong,
   },
-  secondaryButtonText: { color: '#94a3b8', fontWeight: '800', fontSize: 14 },
+  secondaryButtonText: { color: colors.textSecondary, fontWeight: '800', fontSize: 14 },
   buttonDisabled: { opacity: 0.6 },
-  helper: { color: '#4b5563', marginTop: 14, fontSize: 12, lineHeight: 18 },
-  error: { color: '#ef4444', marginTop: 12, fontSize: 12 },
+  helper: { color: colors.textFaint, marginTop: 14, fontSize: 12, lineHeight: 18 },
+  error: { color: colors.expense, marginTop: 12, fontSize: 12 },
 });

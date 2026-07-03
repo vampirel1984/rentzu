@@ -1,9 +1,11 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { Organization, updateOrganization } from '../services/organizations';
 import { getPortfolioSummary, listProperties, Property, PropertyPortfolioSummary } from '../services/properties';
+import { colors } from '../theme/tokens';
 
 const heroImage = require('../../assets/logo_2.png');
 const logoImage = require('../../assets/logo_1.png');
@@ -141,7 +143,7 @@ export default function SummaryScreen({
           <View style={styles.netCardHeader}>
             <Text style={styles.netLabel}>Net year-to-date</Text>
           </View>
-          <Text style={[styles.netValue, { color: Number(portfolioSummary?.net_total || 0) >= 0 ? '#22c55e' : '#f1f5f9' }]}>
+          <Text style={[styles.netValue, { color: Number(portfolioSummary?.net_total || 0) >= 0 ? colors.income : colors.textPrimary }]}>
             {formatMoney(portfolioSummary?.net_total)}
           </Text>
           <Text style={styles.netSub}>Across {portfolioSummary?.property_count || 0} properties</Text>
@@ -157,7 +159,7 @@ export default function SummaryScreen({
           </View>
         </View>
 
-        {loading && <ActivityIndicator style={{ marginTop: 12 }} color="#3b82f6" />}
+        {loading && <ActivityIndicator style={{ marginTop: 12 }} color={colors.accent} />}
 
         {/* Properties */}
         <View style={styles.card}>
@@ -191,9 +193,9 @@ export default function SummaryScreen({
                   disabled={transcribing && recordingPropertyId !== property.id}
                 >
                   {transcribing && recordingPropertyId === property.id ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={colors.onAccent} />
                   ) : (
-                    <Image source={micIcon} style={[styles.micButtonIcon, recordingPropertyId === property.id && { tintColor: '#fff' }]} resizeMode="contain" />
+                    <Image source={micIcon} style={[styles.micButtonIcon, recordingPropertyId === property.id && { tintColor: colors.onAccent }]} resizeMode="contain" />
                   )}
                   {recording && recordingPropertyId === property.id && <View style={styles.micPulse} />}
                 </Pressable>
@@ -207,7 +209,7 @@ export default function SummaryScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 30 },
   heroBackground: {
     paddingHorizontal: 20,
@@ -234,7 +236,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: colors.surfaceBright,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -243,12 +245,12 @@ const styles = StyleSheet.create({
     height: 22,
   },
   greeting: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
   },
   userName: {
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     fontSize: 24,
     fontWeight: '800',
     marginTop: 2,
@@ -256,63 +258,63 @@ const styles = StyleSheet.create({
   orgDropdown: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     marginHorizontal: 20,
     marginTop: 16,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   orgDropdownIcon: {
     fontSize: 16,
     marginRight: 8,
   },
   orgDropdownText: {
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     fontSize: 14,
     fontWeight: '600',
     flex: 1,
   },
   orgDropdownCaret: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 16,
   },
   orgDropdownMenu: {
     marginHorizontal: 20,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
     borderRadius: 12,
     marginTop: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   orgDropdownItem: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: colors.divider,
   },
   orgDropdownItemActive: {
-    backgroundColor: 'rgba(59,130,246,0.15)',
+    backgroundColor: colors.accentSoft,
   },
   orgDropdownItemText: {
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     fontSize: 14,
     fontWeight: '600',
   },
   orgDropdownItemTextActive: {
-    color: '#3b82f6',
+    color: colors.accent,
   },
   netCard: {
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(59,130,246,0.25)',
+    borderColor: colors.accentBorder,
   },
   netCardHeader: {
     flexDirection: 'row',
@@ -320,7 +322,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   netLabel: {
-    color: '#94a3b8',
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -328,10 +330,10 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '900',
     marginTop: 6,
-    color: '#f1f5f9',
+    color: colors.textPrimary,
   },
   netSub: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 12,
     fontWeight: '600',
     marginTop: 4,
@@ -345,18 +347,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   incExpLabel: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 12,
     fontWeight: '700',
   },
   incomeValue: {
-    color: '#22c55e',
+    color: colors.income,
     fontSize: 18,
     fontWeight: '800',
     marginTop: 4,
   },
   expenseValue: {
-    color: '#ef4444',
+    color: colors.expense,
     fontSize: 18,
     fontWeight: '800',
     marginTop: 4,
@@ -364,11 +366,11 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 20,
     padding: 18,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
   cardHeaderRow: {
     flexDirection: 'row',
@@ -377,17 +379,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardTitle: {
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     fontSize: 18,
     fontWeight: '800',
   },
   seeAllText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 13,
     fontWeight: '700',
   },
   helper: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 13,
     lineHeight: 20,
     marginTop: 4,
@@ -395,7 +397,7 @@ const styles = StyleSheet.create({
   propertyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: colors.surfaceFaint,
     borderRadius: 16,
     padding: 12,
     marginTop: 10,
@@ -404,19 +406,19 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 14,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
   },
   propertyInfo: {
     flex: 1,
     marginLeft: 12,
   },
   propertyName: {
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: '800',
   },
   propertyMeta: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 12,
     fontWeight: '600',
     marginTop: 3,
@@ -427,13 +429,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   recordCountBadge: {
-    backgroundColor: 'rgba(59,130,246,0.15)',
+    backgroundColor: colors.accentSoft,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
   recordCountText: {
-    color: '#3b82f6',
+    color: colors.accent,
     fontSize: 11,
     fontWeight: '700',
   },
@@ -441,19 +443,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(139,92,246,0.15)',
+    backgroundColor: colors.repairSoft,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(139,92,246,0.3)',
+    borderColor: colors.repairBorderSoft,
   },
   micButtonIcon: {
     width: 22,
     height: 22,
   },
   micButtonRecording: {
-    backgroundColor: '#ef4444',
-    borderColor: '#ef4444',
+    backgroundColor: colors.expense,
+    borderColor: colors.expense,
   },
   micPulse: {
     position: 'absolute',
@@ -461,10 +463,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: 'rgba(239,68,68,0.5)',
+    borderColor: colors.expenseGlow,
   },
   error: {
-    color: '#ef4444',
+    color: colors.expense,
     marginHorizontal: 20,
     marginTop: 12,
     fontSize: 13,

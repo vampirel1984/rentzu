@@ -1,3 +1,4 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as Sharing from 'expo-sharing';
@@ -5,6 +6,7 @@ import * as Sharing from 'expo-sharing';
 import { getPortfolioSummary, getPropertyTaxReport, listProperties, Property, PropertyPortfolioSummary, PropertyTaxReport } from '../services/properties';
 import { Organization } from '../services/organizations';
 import { downloadScheduleEPdf, downloadPropertyExpensePdf } from '../services/reports';
+import { colors } from '../theme/tokens';
 
 const taxIcon = require('../../assets/logo_12.png');
 
@@ -253,7 +255,7 @@ export default function TaxReadyScreen({ organizationId, organizations, selected
         </ScrollView>
 
         {!!error && <Text style={styles.error}>{error}</Text>}
-        {loading && <ActivityIndicator style={{ marginTop: 12 }} color="#3b82f6" />}
+        {loading && <ActivityIndicator style={{ marginTop: 12 }} color={colors.accent} />}
 
         {/* Estimated Tax Impact */}
         <View style={styles.taxImpactCard}>
@@ -343,7 +345,7 @@ export default function TaxReadyScreen({ organizationId, organizations, selected
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 30 },
   header: {
     flexDirection: 'row',
@@ -353,16 +355,16 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 8,
   },
-  headerTitle: { color: '#f1f5f9', fontSize: 20, fontWeight: '800', flex: 1, textAlign: 'center' },
+  headerTitle: { color: colors.textPrimary, fontSize: 20, fontWeight: '800', flex: 1, textAlign: 'center' },
   infoButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  infoIcon: { color: '#94a3b8', fontSize: 18 },
+  infoIcon: { color: colors.textSecondary, fontSize: 18 },
   dropdownRow: {
     flexDirection: 'row',
     paddingHorizontal: 20,
@@ -372,34 +374,34 @@ const styles = StyleSheet.create({
   dropdownPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   dropdownPillIcon: { fontSize: 14, marginRight: 6 },
-  dropdownPillText: { color: '#f1f5f9', fontSize: 13, fontWeight: '600' },
-  dropdownPillCaret: { color: '#64748b', fontSize: 14, marginLeft: 6 },
+  dropdownPillText: { color: colors.textPrimary, fontSize: 13, fontWeight: '600' },
+  dropdownPillCaret: { color: colors.textMuted, fontSize: 14, marginLeft: 6 },
   dropdownMenu: {
     marginHorizontal: 20,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
     borderRadius: 12,
     marginTop: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   dropdownItem: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: colors.divider,
   },
-  dropdownItemActive: { backgroundColor: 'rgba(59,130,246,0.15)' },
-  dropdownItemText: { color: '#f1f5f9', fontSize: 14, fontWeight: '600' },
-  dropdownItemTextActive: { color: '#3b82f6' },
+  dropdownItemActive: { backgroundColor: colors.accentSoft },
+  dropdownItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: '600' },
+  dropdownItemTextActive: { color: colors.accent },
   propertyTabs: {
     marginTop: 16,
     flexGrow: 0,
@@ -415,101 +417,101 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   propertyTabActive: {
-    borderBottomColor: '#3b82f6',
+    borderBottomColor: colors.accent,
   },
   propertyTabText: {
-    color: '#64748b',
+    color: colors.textMuted,
     fontSize: 13,
     fontWeight: '700',
   },
   propertyTabTextActive: {
-    color: '#3b82f6',
+    color: colors.accent,
   },
   taxImpactCard: {
     flexDirection: 'row',
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
   taxImpactLeft: { flex: 1 },
-  taxImpactLabel: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
-  taxImpactValue: { color: '#ef4444', fontSize: 28, fontWeight: '900', marginTop: 6 },
-  taxImpactDeductionsLabel: { color: '#94a3b8', fontSize: 12, fontWeight: '600', marginTop: 12 },
-  taxImpactDeductionsValue: { color: '#22c55e', fontSize: 18, fontWeight: '800', marginTop: 2 },
+  taxImpactLabel: { color: colors.textSecondary, fontSize: 13, fontWeight: '600' },
+  taxImpactValue: { color: colors.expense, fontSize: 28, fontWeight: '900', marginTop: 6 },
+  taxImpactDeductionsLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 12 },
+  taxImpactDeductionsValue: { color: colors.income, fontSize: 18, fontWeight: '800', marginTop: 2 },
   taxImpactImage: { width: 90, height: 90 },
   card: {
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 20,
     padding: 18,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  cardTitle: { color: '#f1f5f9', fontSize: 16, fontWeight: '800' },
+  cardTitle: { color: colors.textPrimary, fontSize: 16, fontWeight: '800' },
   deductionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 14,
   },
-  deductionScope: { color: '#94a3b8', fontSize: 12, fontWeight: '600', marginTop: 2 },
-  yearBadge: { color: '#64748b', fontSize: 12, fontWeight: '700' },
+  deductionScope: { color: colors.textSecondary, fontSize: 12, fontWeight: '600', marginTop: 2 },
+  yearBadge: { color: colors.textMuted, fontSize: 12, fontWeight: '700' },
   deductionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
   },
   deductionIcon: { fontSize: 16, width: 28 },
-  deductionLabel: { color: '#f1f5f9', fontSize: 14, fontWeight: '600', flex: 1 },
-  deductionAmount: { color: '#22c55e', fontSize: 14, fontWeight: '800' },
+  deductionLabel: { color: colors.textPrimary, fontSize: 14, fontWeight: '600', flex: 1 },
+  deductionAmount: { color: colors.income, fontSize: 14, fontWeight: '800' },
   deductionDivider: {
     height: 1,
-    backgroundColor: 'rgba(55,65,81,0.5)',
+    backgroundColor: colors.cardBorder,
     marginVertical: 8,
   },
-  totalLabel: { color: '#f1f5f9', fontSize: 14, fontWeight: '800', flex: 1 },
-  totalAmount: { color: '#22c55e', fontSize: 15, fontWeight: '900' },
-  netTaxAmount: { color: '#ef4444', fontSize: 15, fontWeight: '900' },
+  totalLabel: { color: colors.textPrimary, fontSize: 14, fontWeight: '800', flex: 1 },
+  totalAmount: { color: colors.income, fontSize: 15, fontWeight: '900' },
+  netTaxAmount: { color: colors.expense, fontSize: 15, fontWeight: '900' },
   reportsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 14,
   },
-  viewAllLink: { color: '#3b82f6', fontSize: 13, fontWeight: '700' },
+  viewAllLink: { color: colors.accent, fontSize: 13, fontWeight: '700' },
   reportRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(55,65,81,0.3)',
+    borderBottomColor: colors.dividerSubtle,
   },
   reportIconWrap: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(59,130,246,0.1)',
+    backgroundColor: colors.accentFaint,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   reportIcon: { fontSize: 18 },
   reportInfo: { flex: 1 },
-  reportName: { color: '#f1f5f9', fontSize: 14, fontWeight: '700' },
+  reportName: { color: colors.textPrimary, fontSize: 14, fontWeight: '700' },
   pdfBadge: {
-    backgroundColor: 'rgba(239,68,68,0.15)',
+    backgroundColor: colors.expenseSoft,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
     marginRight: 10,
   },
-  pdfBadgeText: { color: '#ef4444', fontSize: 11, fontWeight: '800' },
-  downloadIcon: { color: '#64748b', fontSize: 18 },
-  helper: { color: '#64748b', fontSize: 13, lineHeight: 20, marginTop: 4 },
-  error: { color: '#ef4444', marginHorizontal: 20, marginTop: 12, fontSize: 13, fontWeight: '700' },
+  pdfBadgeText: { color: colors.expense, fontSize: 11, fontWeight: '800' },
+  downloadIcon: { color: colors.textMuted, fontSize: 18 },
+  helper: { color: colors.textMuted, fontSize: 13, lineHeight: 20, marginTop: 4 },
+  error: { color: colors.expense, marginHorizontal: 20, marginTop: 12, fontSize: 13, fontWeight: '700' },
 });

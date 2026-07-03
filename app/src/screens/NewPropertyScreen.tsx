@@ -1,7 +1,9 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useMemo, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { createProperty, Property, updateProperty } from '../services/properties';
+import { colors } from '../theme/tokens';
 
 const PROPERTY_TYPE_OPTIONS = [
   { value: 'single_family', label: 'Single family' },
@@ -137,7 +139,7 @@ export default function NewPropertyScreen({ organizationId, initialProperty, onB
           {!!error && <Text style={styles.error}>{error}</Text>}
 
           <Text style={styles.fieldLabel}>Property name</Text>
-          <TextInput style={styles.input} value={propertyForm.name} onChangeText={(v) => setPropertyForm((p) => ({ ...p, name: v }))} placeholder="Elm Street Duplex" placeholderTextColor="#4b5563" />
+          <TextInput style={styles.input} value={propertyForm.name} onChangeText={(v) => setPropertyForm((p) => ({ ...p, name: v }))} placeholder="Elm Street Duplex" placeholderTextColor={colors.textFaint} />
 
           <Text style={styles.fieldLabel}>Property type</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipRow}>
@@ -154,12 +156,12 @@ export default function NewPropertyScreen({ organizationId, initialProperty, onB
           </ScrollView>
 
           <Text style={styles.fieldLabel}>Address</Text>
-          <TextInput style={styles.input} value={propertyForm.address_line_1} onChangeText={(v) => setPropertyForm((p) => ({ ...p, address_line_1: v }))} placeholder="123 Main St" placeholderTextColor="#4b5563" />
+          <TextInput style={styles.input} value={propertyForm.address_line_1} onChangeText={(v) => setPropertyForm((p) => ({ ...p, address_line_1: v }))} placeholder="123 Main St" placeholderTextColor={colors.textFaint} />
 
           <View style={styles.row}>
             <View style={styles.half}>
               <Text style={styles.fieldLabel}>City</Text>
-              <TextInput style={styles.input} value={propertyForm.city} onChangeText={(v) => setPropertyForm((p) => ({ ...p, city: v }))} placeholder="Houston" placeholderTextColor="#4b5563" />
+              <TextInput style={styles.input} value={propertyForm.city} onChangeText={(v) => setPropertyForm((p) => ({ ...p, city: v }))} placeholder="Houston" placeholderTextColor={colors.textFaint} />
             </View>
             <View style={[styles.half, styles.leftSpacing]}>
               <Text style={styles.fieldLabel}>State</Text>
@@ -180,16 +182,16 @@ export default function NewPropertyScreen({ organizationId, initialProperty, onB
           <View style={styles.row}>
             <View style={styles.half}>
               <Text style={styles.fieldLabel}>Postal code</Text>
-              <TextInput style={styles.input} value={propertyForm.postal_code} onChangeText={(v) => setPropertyForm((p) => ({ ...p, postal_code: v }))} placeholder="77001" placeholderTextColor="#4b5563" />
+              <TextInput style={styles.input} value={propertyForm.postal_code} onChangeText={(v) => setPropertyForm((p) => ({ ...p, postal_code: v }))} placeholder="77001" placeholderTextColor={colors.textFaint} />
             </View>
             <View style={[styles.half, styles.leftSpacing]}>
               <Text style={styles.fieldLabel}>Total units</Text>
-              <TextInput style={styles.input} value={propertyForm.total_units} onChangeText={(v) => setPropertyForm((p) => ({ ...p, total_units: v }))} keyboardType="number-pad" placeholder="1" placeholderTextColor="#4b5563" />
+              <TextInput style={styles.input} value={propertyForm.total_units} onChangeText={(v) => setPropertyForm((p) => ({ ...p, total_units: v }))} keyboardType="number-pad" placeholder="1" placeholderTextColor={colors.textFaint} />
             </View>
           </View>
 
           <Text style={styles.fieldLabel}>Notes</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={propertyForm.notes} onChangeText={(v) => setPropertyForm((p) => ({ ...p, notes: v }))} multiline placeholder="Tax notes, rehab details..." placeholderTextColor="#4b5563" />
+          <TextInput style={[styles.input, styles.textArea]} value={propertyForm.notes} onChangeText={(v) => setPropertyForm((p) => ({ ...p, notes: v }))} multiline placeholder="Tax notes, rehab details..." placeholderTextColor={colors.textFaint} />
 
           <Pressable style={[styles.primaryButton, saving && styles.buttonDisabled]} onPress={handleSaveProperty} disabled={saving}>
             <Text style={styles.primaryButtonText}>{saving ? 'Saving...' : isEditing ? 'Save property' : 'Create property'}</Text>
@@ -201,7 +203,7 @@ export default function NewPropertyScreen({ organizationId, initialProperty, onB
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   content: { padding: 20, paddingBottom: 40 },
   header: {
     flexDirection: 'row',
@@ -214,31 +216,31 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backArrow: { color: '#f1f5f9', fontSize: 18, fontWeight: '700' },
-  headerTitle: { color: '#f1f5f9', fontSize: 20, fontWeight: '800' },
+  backArrow: { color: colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  headerTitle: { color: colors.textPrimary, fontSize: 20, fontWeight: '800' },
   card: {
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 24,
     padding: 18,
     marginTop: 8,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  helper: { color: '#94a3b8', fontSize: 13, lineHeight: 20, marginBottom: 8 },
-  fieldLabel: { color: '#94a3b8', fontSize: 12, fontWeight: '700', marginTop: 14, marginBottom: 8 },
+  helper: { color: colors.textSecondary, fontSize: 13, lineHeight: 20, marginBottom: 8 },
+  fieldLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '700', marginTop: 14, marginBottom: 8 },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
     fontSize: 14,
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   textArea: { minHeight: 88, textAlignVertical: 'top' },
   row: { flexDirection: 'row' },
@@ -246,38 +248,38 @@ const styles = StyleSheet.create({
   leftSpacing: { marginLeft: 12 },
   primaryButton: {
     marginTop: 22,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.accent,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
   },
-  primaryButtonText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  primaryButtonText: { color: colors.onAccent, fontWeight: '800', fontSize: 15 },
   buttonDisabled: { opacity: 0.6 },
-  error: { color: '#ef4444', marginTop: 8, marginBottom: 4, fontSize: 13, fontWeight: '700' },
+  error: { color: colors.expense, marginTop: 8, marginBottom: 4, fontSize: 13, fontWeight: '700' },
   chipRow: { flexGrow: 0, marginBottom: 4 },
   typeChip: {
-    backgroundColor: 'rgba(59,130,246,0.12)',
+    backgroundColor: colors.accentChip,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(59,130,246,0.25)',
+    borderColor: colors.accentBorder,
   },
-  typeChipActive: { backgroundColor: '#3b82f6', borderColor: '#3b82f6' },
-  typeChipText: { color: '#3b82f6', fontWeight: '700', fontSize: 13 },
-  typeChipTextActive: { color: '#fff' },
+  typeChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  typeChipText: { color: colors.accent, fontWeight: '700', fontSize: 13 },
+  typeChipTextActive: { color: colors.onAccent },
   stateRow: { flexGrow: 0 },
   stateChip: {
-    backgroundColor: 'rgba(59,130,246,0.12)',
+    backgroundColor: colors.accentChip,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderRadius: 16,
     marginRight: 6,
     borderWidth: 1,
-    borderColor: 'rgba(59,130,246,0.25)',
+    borderColor: colors.accentBorder,
   },
-  stateChipActive: { backgroundColor: '#3b82f6', borderColor: '#3b82f6' },
-  stateChipText: { color: '#3b82f6', fontWeight: '700', fontSize: 12 },
-  stateChipTextActive: { color: '#fff' },
+  stateChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  stateChipText: { color: colors.accent, fontWeight: '700', fontSize: 12 },
+  stateChipTextActive: { color: colors.onAccent },
 });

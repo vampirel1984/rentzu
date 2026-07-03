@@ -1,3 +1,4 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
@@ -6,6 +7,7 @@ import { deleteFinancialRecord, FinancialRecord, listFinancialRecords, updateFin
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { listProperties, Property, getPropertyTaxReport, PropertyTaxReport } from '../services/properties';
 import { Organization } from '../services/organizations';
+import { colors } from '../theme/tokens';
 
 const editIcon = require('../../assets/logo_10.png');
 const micIcon = require('../../assets/logo_7.png');
@@ -321,7 +323,7 @@ export default function HomeScreen({
         </View>
 
         {!!error && <Text style={styles.error}>{error}</Text>}
-        {loading && <ActivityIndicator style={{ marginTop: 12 }} color="#3b82f6" />}
+        {loading && <ActivityIndicator style={{ marginTop: 12 }} color={colors.accent} />}
 
         {activeTab === 'overview' && (
           <>
@@ -344,13 +346,13 @@ export default function HomeScreen({
                   yAxisSuffix=""
                   chartConfig={{
                     backgroundColor: 'transparent',
-                    backgroundGradientFrom: '#111827',
-                    backgroundGradientTo: '#111827',
+                    backgroundGradientFrom: colors.chartBase,
+                    backgroundGradientTo: colors.chartBase,
                     decimalPlaces: 0,
                     color: (opacity = 1) => `rgba(139, 92, 246, ${opacity})`,
-                    labelColor: () => '#64748b',
+                    labelColor: () => colors.textMuted,
                     barPercentage: 0.6,
-                    propsForBackgroundLines: { stroke: 'rgba(55,65,81,0.3)' },
+                    propsForBackgroundLines: { stroke: colors.dividerSubtle },
                   }}
                   style={{ borderRadius: 12 }}
                   withInnerLines={false}
@@ -389,19 +391,19 @@ export default function HomeScreen({
               </View>
               <View style={styles.quickRecordButtons}>
                 <Pressable style={styles.quickButton} onPress={() => onOpenRecordForm({ draft: { type: 'income', category_code: 'rent' }, property: selectedProperty })}>
-                  <View style={[styles.quickButtonCircle, { backgroundColor: 'rgba(34,197,94,0.15)' }]}>
+                  <View style={[styles.quickButtonCircle, { backgroundColor: colors.incomeSoft }]}>
                     <Text style={styles.quickButtonEmoji}>🏠</Text>
                   </View>
                   <Text style={styles.quickButtonLabel}>Rent</Text>
                 </Pressable>
                 <Pressable style={styles.quickButton} onPress={() => onOpenRecordForm({ draft: { type: 'expense' }, property: selectedProperty })}>
-                  <View style={[styles.quickButtonCircle, { backgroundColor: 'rgba(239,68,68,0.15)' }]}>
+                  <View style={[styles.quickButtonCircle, { backgroundColor: colors.expenseSoft }]}>
                     <Image source={expenseIcon} style={styles.quickButtonIcon} resizeMode="contain" />
                   </View>
                   <Text style={styles.quickButtonLabel}>Expense</Text>
                 </Pressable>
                 <Pressable style={styles.quickButton} onPress={() => onOpenRecordForm({ draft: { type: 'improvement', category_code: 'improvement' }, property: selectedProperty })}>
-                  <View style={[styles.quickButtonCircle, { backgroundColor: 'rgba(139,92,246,0.15)' }]}>
+                  <View style={[styles.quickButtonCircle, { backgroundColor: colors.repairSoft }]}>
                     <Text style={styles.quickButtonEmoji}>🏗️</Text>
                   </View>
                   <Text style={styles.quickButtonLabel}>Improvements</Text>
@@ -429,7 +431,7 @@ export default function HomeScreen({
                     </View>
                   </Pressable>
                   <View style={styles.recordRight}>
-                    <Text style={[styles.recordAmount, { color: record.type === 'income' ? '#22c55e' : '#ef4444' }]}>
+                    <Text style={[styles.recordAmount, { color: record.type === 'income' ? colors.income : colors.expense }]}>
                       {record.type === 'income' ? '' : '-'}{formatMoney(record.amount)}
                     </Text>
                     <View style={styles.recordActionsRow}>
@@ -461,7 +463,7 @@ export default function HomeScreen({
                   </View>
                 </View>
                 <View style={styles.recordRight}>
-                  <Text style={[styles.recordAmount, { color: record.type === 'income' ? '#22c55e' : '#ef4444' }]}>
+                  <Text style={[styles.recordAmount, { color: record.type === 'income' ? colors.income : colors.expense }]}>
                     {record.type === 'income' ? '' : '-'}{formatMoney(record.amount)}
                   </Text>
                   <View style={styles.recordActionsRow}>
@@ -477,7 +479,7 @@ export default function HomeScreen({
             ))}
             {hasMoreRecords && (
               <Pressable style={styles.loadMoreButton} onPress={handleLoadMore} disabled={loadingMore}>
-                {loadingMore ? <ActivityIndicator size="small" color="#3b82f6" /> : <Text style={styles.loadMoreText}>Load more records</Text>}
+                {loadingMore ? <ActivityIndicator size="small" color={colors.accent} /> : <Text style={styles.loadMoreText}>Load more records</Text>}
               </Pressable>
             )}
           </View>
@@ -499,7 +501,7 @@ export default function HomeScreen({
           disabled={transcribing}
         >
           {transcribing ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.onAccent} />
           ) : (
             <Image source={micIcon} style={styles.micFabIcon} resizeMode="contain" />
           )}
@@ -511,7 +513,7 @@ export default function HomeScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a' },
+  container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 100 },
   header: {
     flexDirection: 'row',
@@ -525,79 +527,79 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  backArrow: { color: '#f1f5f9', fontSize: 18, fontWeight: '700' },
-  headerTitle: { color: '#f1f5f9', fontSize: 18, fontWeight: '800', flex: 1, textAlign: 'center' },
+  backArrow: { color: colors.textPrimary, fontSize: 18, fontWeight: '700' },
+  headerTitle: { color: colors.textPrimary, fontSize: 18, fontWeight: '800', flex: 1, textAlign: 'center' },
   menuButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  menuDots: { color: '#f1f5f9', fontSize: 16, fontWeight: '800' },
+  menuDots: { color: colors.textPrimary, fontSize: 16, fontWeight: '800' },
   orgPill: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
     marginTop: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   orgPillIcon: { fontSize: 14, marginRight: 6 },
-  orgPillText: { color: '#f1f5f9', fontSize: 13, fontWeight: '600' },
-  orgPillCaret: { color: '#64748b', fontSize: 14, marginLeft: 6 },
+  orgPillText: { color: colors.textPrimary, fontSize: 13, fontWeight: '600' },
+  orgPillCaret: { color: colors.textMuted, fontSize: 14, marginLeft: 6 },
   orgDropdownMenu: {
     marginHorizontal: 60,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
     borderRadius: 12,
     marginTop: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   orgDropdownItem: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: colors.divider,
   },
-  orgDropdownItemActive: { backgroundColor: 'rgba(59,130,246,0.15)' },
-  orgDropdownItemText: { color: '#f1f5f9', fontSize: 14, fontWeight: '600' },
-  orgDropdownItemTextActive: { color: '#3b82f6' },
+  orgDropdownItemActive: { backgroundColor: colors.accentSoft },
+  orgDropdownItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: '600' },
+  orgDropdownItemTextActive: { color: colors.accent },
   propertyInfoCard: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 18,
     padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
   propertyImage: {
     width: 52,
     height: 52,
     borderRadius: 14,
-    backgroundColor: '#1e293b',
+    backgroundColor: colors.menu,
   },
   propertyInfoText: { flex: 1, marginLeft: 12 },
-  propertyInfoName: { color: '#f1f5f9', fontSize: 18, fontWeight: '800' },
-  propertyInfoMeta: { color: '#64748b', fontSize: 13, fontWeight: '600', marginTop: 3 },
+  propertyInfoName: { color: colors.textPrimary, fontSize: 18, fontWeight: '800' },
+  propertyInfoMeta: { color: colors.textMuted, fontSize: 13, fontWeight: '600', marginTop: 3 },
   editButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: colors.surfaceStrong,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -607,7 +609,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(55,65,81,0.3)',
+    borderBottomColor: colors.dividerSubtle,
   },
   tab: {
     paddingVertical: 12,
@@ -616,36 +618,36 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: '#3b82f6',
+    borderBottomColor: colors.accent,
   },
-  tabText: { color: '#64748b', fontSize: 14, fontWeight: '700' },
-  tabTextActive: { color: '#3b82f6' },
+  tabText: { color: colors.textMuted, fontSize: 14, fontWeight: '700' },
+  tabTextActive: { color: colors.accent },
   card: {
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 20,
     padding: 18,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  cardTitle: { color: '#f1f5f9', fontSize: 16, fontWeight: '800' },
+  cardTitle: { color: colors.textPrimary, fontSize: 16, fontWeight: '800' },
   cashFlowHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  cashFlowLabel: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
-  cashFlowValue: { color: '#f1f5f9', fontSize: 28, fontWeight: '900', marginTop: 4 },
+  cashFlowLabel: { color: colors.textSecondary, fontSize: 13, fontWeight: '600' },
+  cashFlowValue: { color: colors.textPrimary, fontSize: 28, fontWeight: '900', marginTop: 4 },
   voiceCircle: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(139,92,246,0.2)',
+    backgroundColor: colors.repairSoftStrong,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(139,92,246,0.4)',
+    borderColor: colors.repairBorder,
   },
   voiceCircleIcon: { width: 22, height: 22 },
   chartWrap: {
@@ -662,16 +664,16 @@ const styles = StyleSheet.create({
   },
   metricBox: {
     flex: 1,
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
-  metricLabel: { color: '#64748b', fontSize: 11, fontWeight: '700' },
-  metricValueGreen: { color: '#22c55e', fontSize: 16, fontWeight: '800', marginTop: 4 },
-  metricValueRed: { color: '#ef4444', fontSize: 16, fontWeight: '800', marginTop: 4 },
-  metricValueBlue: { color: '#3b82f6', fontSize: 16, fontWeight: '800', marginTop: 4 },
+  metricLabel: { color: colors.textMuted, fontSize: 11, fontWeight: '700' },
+  metricValueGreen: { color: colors.income, fontSize: 16, fontWeight: '800', marginTop: 4 },
+  metricValueRed: { color: colors.expense, fontSize: 16, fontWeight: '800', marginTop: 4 },
+  metricValueBlue: { color: colors.accent, fontSize: 16, fontWeight: '800', marginTop: 4 },
   recordsCountWrap: { flexDirection: 'row', alignItems: 'center' },
   quickRecordHeader: {
     flexDirection: 'row',
@@ -679,7 +681,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 14,
   },
-  addTransactionLink: { color: '#3b82f6', fontSize: 13, fontWeight: '700' },
+  addTransactionLink: { color: colors.accent, fontSize: 13, fontWeight: '700' },
   quickRecordButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -698,33 +700,33 @@ const styles = StyleSheet.create({
   },
   quickButtonEmoji: { fontSize: 24 },
   quickButtonIcon: { width: 28, height: 28 },
-  quickButtonLabel: { color: '#94a3b8', fontSize: 12, fontWeight: '700' },
+  quickButtonLabel: { color: colors.textSecondary, fontSize: 12, fontWeight: '700' },
   recordRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(55,65,81,0.3)',
+    borderBottomColor: colors.dividerSubtle,
   },
   recordInfo: { flex: 1, paddingRight: 12 },
-  recordDate: { color: '#f1f5f9', fontSize: 13, fontWeight: '700' },
-  recordMeta: { color: '#64748b', fontSize: 12, marginTop: 3 },
+  recordDate: { color: colors.textPrimary, fontSize: 13, fontWeight: '700' },
+  recordMeta: { color: colors.textMuted, fontSize: 12, marginTop: 3 },
   recordRight: { alignItems: 'flex-end' },
   recordAmount: { fontSize: 14, fontWeight: '800' },
-  recordChevron: { color: '#64748b', fontSize: 20, marginTop: 2 },
+  recordChevron: { color: colors.textMuted, fontSize: 20, marginTop: 2 },
   recordActionsRow: { flexDirection: 'row', gap: 12, marginTop: 6 },
-  editLink: { color: '#3b82f6', fontSize: 12, fontWeight: '700' },
-  deleteLink: { color: '#ef4444', fontSize: 12, fontWeight: '700' },
-  helper: { color: '#64748b', fontSize: 13, lineHeight: 20, marginTop: 8 },
-  error: { color: '#ef4444', marginHorizontal: 20, marginTop: 12, fontSize: 13, fontWeight: '700' },
+  editLink: { color: colors.accent, fontSize: 12, fontWeight: '700' },
+  deleteLink: { color: colors.expense, fontSize: 12, fontWeight: '700' },
+  helper: { color: colors.textMuted, fontSize: 13, lineHeight: 20, marginTop: 8 },
+  error: { color: colors.expense, marginHorizontal: 20, marginTop: 12, fontSize: 13, fontWeight: '700' },
   loadMoreButton: {
     marginTop: 14,
-    backgroundColor: 'rgba(59,130,246,0.1)',
+    backgroundColor: colors.accentFaint,
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  loadMoreText: { color: '#3b82f6', fontWeight: '800', fontSize: 13 },
+  loadMoreText: { color: colors.accent, fontWeight: '800', fontSize: 13 },
   micFab: {
     position: 'absolute',
     bottom: 24,
@@ -732,10 +734,10 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#8b5cf6',
+    backgroundColor: colors.repair,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#8b5cf6',
+    shadowColor: colors.repair,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -743,13 +745,13 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   micFabActive: {
-    backgroundColor: '#ef4444',
-    shadowColor: '#ef4444',
+    backgroundColor: colors.expense,
+    shadowColor: colors.expense,
   },
   micFabIcon: {
     width: 30,
     height: 30,
-    tintColor: '#fff',
+    tintColor: colors.onAccent,
   },
   micFabPulse: {
     position: 'absolute',
@@ -757,7 +759,7 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 3,
-    borderColor: 'rgba(239,68,68,0.5)',
+    borderColor: colors.expenseGlow,
   },
   recordMetaRow: {
     flexDirection: 'row',
@@ -767,13 +769,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   categoryBadge: {
-    backgroundColor: 'rgba(59,130,246,0.14)',
+    backgroundColor: colors.accentBadge,
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
   categoryBadgeText: {
-    color: '#93c5fd',
+    color: colors.accentLight,
     fontSize: 11,
     fontWeight: '700',
   },

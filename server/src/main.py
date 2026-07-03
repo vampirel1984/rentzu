@@ -12,7 +12,7 @@ from fastapi import FastAPI
 
 from db import Base, engine
 from models import BillingEvent, EmailVerificationCode, FinancialRecord, Organization, OrganizationBilling, OrganizationUser, Property, Renter, Unit, User
-from routers import auth, organizations, properties, units, renters, financial_records, voice, billing, reports
+from routers import auth, organizations, properties, units, renters, financial_records, voice, billing, reports, users
 
 
 @asynccontextmanager
@@ -24,6 +24,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Rentzu API", version="0.1.0", lifespan=lifespan)
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(organizations.router, prefix="/organizations", tags=["organizations"])
 app.include_router(properties.router, prefix="/properties", tags=["properties"])
 app.include_router(units.router, prefix="/units", tags=["units"])

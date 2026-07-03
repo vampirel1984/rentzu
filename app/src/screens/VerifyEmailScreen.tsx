@@ -1,8 +1,10 @@
+// Modified by AI on 07/03/2026. Edit #1.
 import React, { useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AuthResponse, verifyCode } from '../services/auth';
 import { saveSession, setAccessToken } from '../services/api';
+import { colors } from '../theme/tokens';
 
 type Props = {
   email: string;
@@ -63,7 +65,7 @@ export default function VerifyEmailScreen({ email, debugCode, deliveryMode, requ
           textContentType="oneTimeCode"
           importantForAutofill="no"
           placeholder="123456"
-          placeholderTextColor="#4b5563"
+          placeholderTextColor={colors.textFaint}
         />
 
         <Pressable style={styles.primaryButton} onPress={handleVerify}>
@@ -84,48 +86,48 @@ export default function VerifyEmailScreen({ email, debugCode, deliveryMode, requ
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0e1a', padding: 20, justifyContent: 'center' },
+  container: { flex: 1, backgroundColor: colors.background, padding: 20, justifyContent: 'center' },
   card: {
-    backgroundColor: 'rgba(17,24,39,0.8)',
+    backgroundColor: colors.card,
     borderRadius: 24,
     padding: 24,
     borderWidth: 1,
-    borderColor: 'rgba(55,65,81,0.5)',
+    borderColor: colors.cardBorder,
   },
   icon: { textAlign: 'center', fontSize: 34, marginBottom: 12 },
-  title: { fontSize: 26, fontWeight: '800', color: '#f1f5f9', textAlign: 'center' },
-  subtitle: { color: '#94a3b8', fontSize: 14, lineHeight: 21, textAlign: 'center', marginTop: 10, marginBottom: 18 },
-  label: { color: '#94a3b8', fontSize: 12, fontWeight: '700', marginBottom: 8 },
+  title: { fontSize: 26, fontWeight: '800', color: colors.textPrimary, textAlign: 'center' },
+  subtitle: { color: colors.textSecondary, fontSize: 14, lineHeight: 21, textAlign: 'center', marginTop: 10, marginBottom: 18 },
+  label: { color: colors.textSecondary, fontSize: 12, fontWeight: '700', marginBottom: 8 },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 15,
     fontSize: 22,
     textAlign: 'center',
     letterSpacing: 8,
-    color: '#f1f5f9',
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: colors.border,
   },
   primaryButton: {
     marginTop: 18,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.accent,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
   },
-  primaryButtonText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  primaryButtonText: { color: colors.onAccent, fontWeight: '800', fontSize: 15 },
   secondaryButton: {
     marginTop: 10,
     borderRadius: 18,
     paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: colors.borderStrong,
   },
-  secondaryButtonText: { color: '#94a3b8', fontWeight: '800', fontSize: 14 },
-  helper: { color: '#4b5563', fontSize: 12, textAlign: 'center', marginTop: 14 },
-  error: { color: '#ef4444', marginTop: 12, fontSize: 12, textAlign: 'center' },
+  secondaryButtonText: { color: colors.textSecondary, fontWeight: '800', fontSize: 14 },
+  helper: { color: colors.textFaint, fontSize: 12, textAlign: 'center', marginTop: 14 },
+  error: { color: colors.expense, marginTop: 12, fontSize: 12, textAlign: 'center' },
 });
