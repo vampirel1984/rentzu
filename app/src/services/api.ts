@@ -60,7 +60,11 @@ export async function clearSession(): Promise<void> {
 
 // --- HTTP helpers ---
 
-export const API_BASE_URL = 'http://10.0.2.2:8000';
+// Set EXPO_PUBLIC_API_BASE_URL to point builds at a reachable backend. The
+// 10.0.2.2 fallback is the Android emulator's alias for the host machine's
+// localhost and only works for local development.
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://10.0.2.2:8000';
 
 function authHeaders(): Record<string, string> {
   const headers: Record<string, string> = {};
@@ -73,7 +77,17 @@ function authHeaders(): Record<string, string> {
 async function parseResponse<T>(response: Response): Promise<T> {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.detail || data.message || 'Request failed');
+    const detail = (data as any)?.detail;
+    let message = (data as any)?.message || 'Request failed';
+    if (typeof detail === 'string') {
+      message = detail;
+    } else if (Array.isArray(detail)) {
+      // FastAPI validation errors: a list of {loc, msg, type} objects.
+      message = detail.map((item) => item?.msg || JSON.stringify(item)).join('; ') || message;
+    } else if (detail && typeof detail === 'object') {
+      message = (detail as any).msg || JSON.stringify(detail);
+    }
+    throw new Error(message);
   }
   return data as T;
 }

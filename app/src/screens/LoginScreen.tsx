@@ -1,8 +1,9 @@
 // Modified by AI on 07/03/2026. Edit #1.
 import React, { useState } from 'react';
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AuthResponse, createDevSession, requestCode } from '../services/auth';
+import { AuthResponse, requestCode } from '../services/auth';
 import { saveSession, setAccessToken } from '../services/api';
 import { colors } from '../theme/tokens';
 
@@ -33,32 +34,6 @@ export default function LoginScreen({ onSuccess }: Props) {
       onSuccess({ ...result, email });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not request verification code.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDevContinue = async () => {
-    setError('');
-    if (!email.includes('@') || !password) {
-      setError('Please enter a valid email and password.');
-      return;
-    }
-    try {
-      setLoading(true);
-      const result = await createDevSession(email, password);
-      if (result.access_token) {
-        setAccessToken(result.access_token);
-        await saveSession({
-          userId: result.user_id || '',
-          email,
-          organizationId: result.organization_id || '',
-          organizationIds: result.organization_ids || [],
-        });
-      }
-      onSuccess({ ...result, email });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not create local dev session.');
     } finally {
       setLoading(false);
     }
@@ -113,10 +88,6 @@ export default function LoginScreen({ onSuccess }: Props) {
 
         <Pressable style={[styles.primaryButton, loading && styles.buttonDisabled]} onPress={handleLogin} disabled={loading}>
           <Text style={styles.primaryButtonText}>{loading ? 'Sending code...' : 'Continue with email'}</Text>
-        </Pressable>
-
-        <Pressable style={[styles.secondaryButton, loading && styles.buttonDisabled]} onPress={handleDevContinue} disabled={loading}>
-          <Text style={styles.secondaryButtonText}>{loading ? 'Preparing workspace...' : 'Enter local dev workspace'}</Text>
         </Pressable>
 
         {!!error && <Text style={styles.error}>{error}</Text>}

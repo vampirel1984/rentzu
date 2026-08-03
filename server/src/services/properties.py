@@ -1,3 +1,4 @@
+# Modified by AI on 07/18/2026. Edit #1.
 from collections import defaultdict
 from datetime import date
 from decimal import Decimal
@@ -122,20 +123,21 @@ def patch_property(db: Session, obj: Property, payload: PropertyPatch):
 
 
 
-def _query_property_rows_for_year(db: Session, property_id: UUID, year: int):
-    return (
+def _query_property_rows_for_year(db: Session, property_id: UUID, year: int, unit_id: UUID | None = None):
+    query = (
         db.query(FinancialRecord)
         .filter(FinancialRecord.property_id == property_id)
         .filter(FinancialRecord.record_date >= date(year, 1, 1))
         .filter(FinancialRecord.record_date <= date(year, 12, 31))
-        .order_by(FinancialRecord.record_date.asc())
-        .all()
     )
+    if unit_id:
+        query = query.filter(FinancialRecord.unit_id == unit_id)
+    return query.order_by(FinancialRecord.record_date.asc()).all()
 
 
 
-def build_property_tax_report(db: Session, property_obj: Property, year: int):
-    rows = _query_property_rows_for_year(db, property_obj.id, year)
+def build_property_tax_report(db: Session, property_obj: Property, year: int, unit_id: UUID | None = None):
+    rows = _query_property_rows_for_year(db, property_obj.id, year, unit_id=unit_id)
 
     income_total = Decimal('0.00')
     expense_total = Decimal('0.00')
@@ -163,7 +165,8 @@ def build_property_tax_report(db: Session, property_obj: Property, year: int):
             expense_total += amount
             monthly_map[month_key]['expense'] += amount
             monthly_map[month_key]['net'] -= amount
-            if normalized_type in DEDUCTIBLE_EXPENSE_TYPES or category_key != 'income':
+            # Mortgage principal is a cash outflow (kept in expense/cash-flow totals) but is not tax-deductible.
+            if category_key != 'mortgage' and (normalized_type in DEDUCTIBLE_EXPENSE_TYPES or category_key != 'income'):
                 deductible_expense_total += amount
 
         category_map[category_key] += amount

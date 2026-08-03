@@ -12,6 +12,7 @@ from db import get_db
 from dependencies import CurrentUser, get_current_user
 from models.organization import Organization
 from services.reports import generate_property_expense_pdf, generate_schedule_e_pdf
+from services.billing import exports_allowed_for_org
 
 router = APIRouter()
 
@@ -19,6 +20,16 @@ router = APIRouter()
 def _get_org_name(db: Session, organization_id: UUID) -> str:
     org = db.query(Organization).filter(Organization.id == organization_id).first()
     return org.name if org else 'Portfolio'
+
+
+def _require_exports_allowed(db: Session, organization_id: UUID) -> None:
+    # Modified by AI on 07/18/2026. Edit #1.
+    # Tax-ready exports are gated behind a paid plan per pricing_research.md.
+    if not exports_allowed_for_org(db, organization_id):
+        raise HTTPException(
+            status_code=402,
+            detail='Tax-ready PDF exports require a paid plan. Upgrade to Normal or Pro to download this report.',
+        )
 
 
 @router.get('/schedule-e')
@@ -30,6 +41,7 @@ def download_schedule_e(
 ):
     """Download Schedule E Summary as PDF."""
     current_user.require_org_access(organization_id)
+    _require_exports_allowed(db, organization_id)
     org_name = _get_org_name(db, organization_id)
 
     try:
@@ -55,6 +67,7 @@ def download_property_expense(
 ):
     """Download Property Expense Summary as PDF."""
     current_user.require_org_access(organization_id)
+    _require_exports_allowed(db, organization_id)
     org_name = _get_org_name(db, organization_id)
 
     try:

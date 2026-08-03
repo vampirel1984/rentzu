@@ -244,6 +244,7 @@ create table if not exists financial_records (
             'travel',
             'commission',
             'interest',
+            'mortgage', -- Modified by AI on 07/18/2026. Edit #1.
             'improvement',
             'insurance',
             'tax'

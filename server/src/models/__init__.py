@@ -8,3 +8,4 @@ from .financial_record import FinancialRecord
 from .email_verification_code import EmailVerificationCode
 from .organization_billing import OrganizationBilling
 from .billing_event import BillingEvent
+from .revenuecat_event import RevenueCatEvent

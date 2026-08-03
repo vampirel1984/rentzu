@@ -4,54 +4,40 @@ from sqlalchemy.orm import Session
 from db import get_db
 from models.organization_user import OrganizationUser
 from schemas.auth import AuthResponse, RequestCodePayload, VerifyCodePayload
-from services.auth import create_dev_session, request_email_code, verify_email_code
+from services.auth import request_email_code, verify_email_code
 from services.jwt_auth import create_access_token
+from services.user_bootstrap import AuthError
 
 router = APIRouter()
 
 
 @router.post("/request-code", response_model=AuthResponse)
 def request_code(payload: RequestCodePayload, db: Session = Depends(get_db)):
-    _record, code, delivered, delivery_message, user = request_email_code(db, payload.email, payload.password)
-    message = "Verification code sent" if delivered else delivery_message
+    try:
+        _record, _code, delivered, delivery_message, user = request_email_code(db, payload.email, payload.password)
+    except AuthError:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    org_ids = [
-        str(row.organization_id)
-        for row in db.query(OrganizationUser).filter(OrganizationUser.user_id == user.id).all()
-    ]
+    if not delivered:
+        # The code is written to the local outbox for recovery, but never returned
+        # to the caller - doing so would bypass email verification entirely.
+        print(f"[auth.request-code] delivery failed for {payload.email}: {delivery_message}")
+        raise HTTPException(
+            status_code=503,
+            detail="Could not send the verification email. Please try again later.",
+        )
 
     return AuthResponse(
         ok=True,
-        message=message,
+        message="Verification code sent",
         email=payload.email,
         user_id=str(user.id),
-        debug_code=None if delivered else code,
-        delivery_mode="smtp" if delivered else "outbox",
-    )
-
-
-@router.post("/dev-session", response_model=AuthResponse)
-def dev_session(payload: RequestCodePayload, db: Session = Depends(get_db)):
-    user, organization, organization_ids = create_dev_session(db, payload.email, payload.password)
-    token = create_access_token(
-        user_id=str(user.id),
-        email=payload.email,
-        organization_ids=organization_ids,
-    )
-    return AuthResponse(
-        ok=True,
-        message="Local dev session ready",
-        email=payload.email,
-        user_id=str(user.id),
-        organization_id=str(organization.id),
-        organization_ids=organization_ids,
-        access_token=token,
+        delivery_mode="smtp",
     )
 
 
 @router.post("/verify-code", response_model=AuthResponse)
 def verify_code(payload: VerifyCodePayload, db: Session = Depends(get_db)):
-    print(f"[auth.verify-code] email={payload.email!r} code={payload.code!r} len={len(payload.code)}")
     result = verify_email_code(db, payload.email, payload.code)
     ok = result[0]
     message = result[1]

@@ -11,7 +11,7 @@ logging.basicConfig(
 from fastapi import FastAPI
 
 from db import Base, engine
-from models import BillingEvent, EmailVerificationCode, FinancialRecord, Organization, OrganizationBilling, OrganizationUser, Property, Renter, Unit, User
+from models import BillingEvent, EmailVerificationCode, FinancialRecord, Organization, OrganizationBilling, OrganizationUser, Property, Renter, RevenueCatEvent, Unit, User
 from routers import auth, organizations, properties, units, renters, financial_records, voice, billing, reports, users
 
 

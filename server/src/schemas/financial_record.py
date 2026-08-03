@@ -1,3 +1,4 @@
+# Modified by AI on 07/18/2026. Edit #1.
 from datetime import date
 from decimal import Decimal
 import re
@@ -20,6 +21,7 @@ ALLOWED_FINANCIAL_CATEGORY_CODES = (
     'travel',
     'commission',
     'interest',
+    'mortgage',
     'improvement',
     'insurance',
     'tax',
@@ -52,6 +54,13 @@ FINANCIAL_CATEGORY_ALIASES = {
     'property_tax': 'tax',
     'property_taxes': 'tax',
     'taxes': 'tax',
+    'mortgage_interest': 'interest',
+    'loan_interest': 'interest',
+    'mortgage_principal': 'mortgage',
+    'principal': 'mortgage',
+    'mortgage_payment': 'mortgage',
+    'loan_principal': 'mortgage',
+    'loan': 'mortgage',
 }
 
 

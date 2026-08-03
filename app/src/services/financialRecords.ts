@@ -48,10 +48,14 @@ export async function listFinancialRecords(
   propertyId?: string,
   limit = 5,
   cursor?: string,
+  unitId?: string,
 ) {
   let query = `/financial-records?organization_id=${organizationId}&limit=${limit}`;
   if (propertyId) {
     query += `&property_id=${propertyId}`;
+  }
+  if (unitId) {
+    query += `&unit_id=${unitId}`;
   }
   if (cursor) {
     query += `&cursor=${encodeURIComponent(cursor)}`;

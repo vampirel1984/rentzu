@@ -1,4 +1,5 @@
 """PDF report generation for tax-ready reports."""
+# Modified by AI on 07/18/2026. Edit #1.
 
 import io
 from collections import defaultdict
@@ -100,6 +101,10 @@ TAX_CATEGORY_LABELS = {
     'tax': 'Taxes',
     'property_tax': 'Taxes',
     'taxes': 'Taxes',
+    'interest': 'Mortgage Interest',
+    'mortgage_interest': 'Mortgage Interest',
+    'mortgage': 'Mortgage Principal (non-deductible)',
+    'mortgage_principal': 'Mortgage Principal (non-deductible)',
     'hoa': 'HOA / Association',
     'condo': 'HOA / Association',
     'association': 'HOA / Association',
@@ -216,6 +221,9 @@ def _build_property_support_tables(records: list[FinancialRecord]):
         amount = Decimal(str(record.amount or 0))
 
         if record_type == 'income':
+            continue
+        # Mortgage principal is a cash outflow but not a deductible expense; exclude from Schedule E totals.
+        if (record.category_code or '').lower().strip() == 'mortgage':
             continue
         if category_label == 'Capital Improvements' or record_type == 'improvement':
             improvements.append(record)

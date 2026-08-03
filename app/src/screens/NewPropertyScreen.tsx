@@ -1,6 +1,7 @@
 // Modified by AI on 07/03/2026. Edit #1.
 import React, { useMemo, useRef, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { createProperty, Property, updateProperty } from '../services/properties';
 import { colors } from '../theme/tokens';

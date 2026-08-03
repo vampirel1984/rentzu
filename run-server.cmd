@@ -20,7 +20,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "$targets = Get-CimInstan
 for /f "usebackq tokens=1,* delims==" %%A in (".env") do (
   if not "%%A"=="" if not "%%A:~0,1"=="#" set "%%A=%%B"
 )
-if not defined RENTZU_FIXED_VERIFICATION_CODE set "RENTZU_FIXED_VERIFICATION_CODE=123456"
 echo SMTP_HOST=%SMTP_HOST%
 echo SMTP_USER=%SMTP_USER%
 call .venv\Scripts\activate

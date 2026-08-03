@@ -63,13 +63,14 @@ def properties_show(
 def property_tax_report(
     property_id: UUID,
     year: int = Query(default=datetime.utcnow().year),
+    unit_id: UUID | None = Query(default=None),
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
     obj = get_property_row(db, property_id)
     if not obj:
         raise HTTPException(status_code=404, detail='Property not found')
-    return build_property_tax_report(db, obj, year)
+    return build_property_tax_report(db, obj, year, unit_id=unit_id)
 
 
 @router.post('', response_model=PropertyRead)

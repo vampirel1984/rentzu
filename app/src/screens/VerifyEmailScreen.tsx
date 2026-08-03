@@ -1,6 +1,7 @@
 // Modified by AI on 07/03/2026. Edit #1.
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AuthResponse, verifyCode } from '../services/auth';
 import { saveSession, setAccessToken } from '../services/api';
@@ -8,7 +9,6 @@ import { colors } from '../theme/tokens';
 
 type Props = {
   email: string;
-  debugCode?: string;
   deliveryMode?: 'smtp' | 'outbox';
   requestMessage?: string;
   onBack: () => void;
@@ -16,8 +16,8 @@ type Props = {
   onDebugPayload?: (payload: string) => void;
 };
 
-export default function VerifyEmailScreen({ email, debugCode, deliveryMode, requestMessage, onBack, onVerified, onDebugPayload }: Props) {
-  const [code, setCode] = useState(debugCode ?? '');
+export default function VerifyEmailScreen({ email, deliveryMode, requestMessage, onBack, onVerified, onDebugPayload }: Props) {
+  const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const normalizedCode = code.replace(/\D/g, '').trim();
@@ -77,7 +77,7 @@ export default function VerifyEmailScreen({ email, debugCode, deliveryMode, requ
         </Pressable>
 
         {!!requestMessage && <Text style={styles.helper}>{requestMessage}</Text>}
-        {deliveryMode === 'outbox' && !!debugCode && <Text style={styles.helper}>SMTP is not configured. Dev code: {debugCode}</Text>}
+        {deliveryMode === 'outbox' && <Text style={styles.helper}>SMTP is not configured.</Text>}
         {deliveryMode === 'smtp' && <Text style={styles.helper}>Verification email was sent. Check your inbox for the 6-digit code.</Text>}
         {!!error && <Text style={styles.error}>{error}</Text>}
       </View>

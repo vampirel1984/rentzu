@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# Modified by AI on 07/18/2026. Edit #1.
 import json
 import logging
 import os
@@ -8,6 +9,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 import requests
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -17,6 +19,8 @@ from sqlalchemy.orm import Session
 from db import get_db
 from dependencies import CurrentUser, get_current_user
 from services.whisper_transcribe import transcribe_audio as whisper_transcribe_audio
+from services.audio_convert import probe_audio_duration_seconds
+from services.billing import consume_voice_quota, _max_voice_seconds
 from services.financial_records import (
     build_financial_record_insert_statement,
     execute_financial_record_insert_script,
@@ -49,7 +53,7 @@ Each object must have exactly these fields:
 - description: string or null
 - type: \"expense\" or \"income\" or \"improvement\" or null
 - counterparty: string or null
-- category_code: for income use \"rent\" by default unless it is clearly another income, then use \"additional_income\"; for expense prefer one of \"other\", \"maintenance\", \"repair\", \"utility\"; for uncommon expense types like legal or management, return \"other\"; for improvement use \"improvement\"; use null when unknown
+- category_code: for income use \"rent\" by default unless it is clearly another income, then use \"additional_income\"; for expense prefer one of \"other\", \"maintenance\", \"repair\", \"utility\", \"insurance\", \"tax\"; for mortgage or loan interest use \"interest\"; for a mortgage or loan principal payment use \"mortgage\"; for uncommon expense types like legal or management, return \"other\"; for improvement use \"improvement\"; use null when unknown
 Return one object per financial record mentioned.
 If the user mentions multiple records, return multiple objects.
 Use null when unknown.
@@ -73,9 +77,13 @@ def _coerce_record(item: dict[str, Any]) -> dict[str, Any]:
         category_code = 'other'
     elif type_value == 'expense' and category_code == 'repairs':
         category_code = 'repair'
+    elif type_value == 'expense' and category_code in {'mortgage_interest', 'loan_interest'}:
+        category_code = 'interest'
+    elif type_value == 'expense' and category_code in {'mortgage_principal', 'principal', 'mortgage_payment', 'loan_principal', 'loan'}:
+        category_code = 'mortgage'
     elif type_value == 'improvement' and not category_code:
         category_code = 'improvement'
-    if category_code not in {'rent', 'additional_income', 'other', 'maintenance', 'repair', 'utility', 'improvement'}:
+    if category_code not in {'rent', 'additional_income', 'other', 'maintenance', 'repair', 'utility', 'interest', 'mortgage', 'improvement'}:
         category_code = 'rent' if type_value == 'income' else 'improvement' if type_value == 'improvement' else None
     return {
         'type': type_value,
@@ -253,90 +261,100 @@ async def voice_transcribe(
     logger.info('[VOICE] ── Request %s ── file=%s, size_hint=%s, org=%s, prop=%s, auto_insert=%s',
                 request_id, audio.filename, audio.size, organization_id, property_id, auto_insert)
 
-    try:
-        DEBUG_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+    DEBUG_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=DEBUG_AUDIO_DIR) as temp_file:
-            temp_path = Path(temp_file.name)
-            while True:
-                chunk = await audio.read(1024 * 1024)
-                if not chunk:
-                    break
-                temp_file.write(chunk)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=DEBUG_AUDIO_DIR) as temp_file:
+        temp_path = Path(temp_file.name)
+        while True:
+            chunk = await audio.read(1024 * 1024)
+            if not chunk:
+                break
+            temp_file.write(chunk)
 
-        debug_name = f"{datetime.now().strftime('%Y%m%d-%H%M%S')}_{audio.filename or temp_path.name}"
-        debug_copy_path = DEBUG_AUDIO_DIR / debug_name
-        shutil.copy2(temp_path, debug_copy_path)
-        size_bytes = temp_path.stat().st_size if temp_path.exists() else 0
-        logger.info('[VOICE] Audio saved: %s (%d bytes), debug copy: %s', temp_path, size_bytes, debug_copy_path)
+    debug_name = f"{datetime.now().strftime('%Y%m%d-%H%M%S')}_{audio.filename or temp_path.name}"
+    debug_copy_path = DEBUG_AUDIO_DIR / debug_name
+    shutil.copy2(temp_path, debug_copy_path)
+    size_bytes = temp_path.stat().st_size if temp_path.exists() else 0
+    logger.info('[VOICE] Audio saved: %s (%d bytes), debug copy: %s', temp_path, size_bytes, debug_copy_path)
 
-        # Modified by AI on 07/03/2026. Edit #1.
-        # Use the caller's chosen language, else fall back to the user's saved
-        # profile preference ('zh' for Chinese), else auto-detect.
-        voice_language = (language or getattr(current_user.user, 'language_preference', None) or '').strip().lower() or None
-        transcript = _transcribe_with_whisper(temp_path, language=voice_language)
-        extracted_records, extraction_raw_output, openai_response = _extract_records_from_text(transcript)
-        raw_output = extraction_raw_output
-        insert_rows = []
-        insert_statement = ''
-        insert_params: dict[str, Any] = {}
-        inserted_records: list[dict[str, Any]] = []
+    # Modified by AI on 07/18/2026. Edit #2.
+    # Enforce the 30s recording cap and account voice quota before paying for
+    # transcription/LLM extraction. Length cap applies regardless of org
+    # (cost control); quota only applies when an organization_id is supplied.
+    max_seconds = _max_voice_seconds()
+    duration_seconds = probe_audio_duration_seconds(temp_path)
+    if duration_seconds is not None and duration_seconds > max_seconds + 1:
+        raise HTTPException(
+            status_code=400,
+            detail=f'Voice recording is too long ({duration_seconds:.0f}s). Max allowed is {max_seconds}s.',
+        )
 
-        if auto_insert and organization_id and property_id:
-            insert_rows = prepare_financial_record_insert_rows(
-                organization_id=organization_id,
-                property_id=property_id,
-                records=extracted_records,
-                transcript=transcript,
-                created_by=created_by,
-            )
-            insert_statement, insert_params = build_financial_record_insert_statement(insert_rows)
-            inserted_records = execute_financial_record_insert_script(db, insert_statement, insert_params)
-            logger.info('[DB] Inserted %d record(s) into financial_records: %s',
-                        len(inserted_records), json.dumps(inserted_records, default=str)[:500])
-        else:
-            logger.info('[DB] Skipping auto-insert (auto_insert=%s, org=%s, prop=%s)',
-                        auto_insert, organization_id, property_id)
+    voice_quota_status = None
+    if organization_id:
+        voice_quota_status = consume_voice_quota(db, UUID(organization_id))
 
-        response_payload = {
-            'ok': True,
+    # Modified by AI on 07/03/2026. Edit #1.
+    # Use the caller's chosen language, else fall back to the user's saved
+    # profile preference ('zh' for Chinese), else auto-detect.
+    voice_language = (language or getattr(current_user.user, 'language_preference', None) or '').strip().lower() or None
+    transcript = _transcribe_with_whisper(temp_path, language=voice_language)
+    extracted_records, extraction_raw_output, openai_response = _extract_records_from_text(transcript)
+    raw_output = extraction_raw_output
+    insert_rows = []
+    insert_statement = ''
+    insert_params: dict[str, Any] = {}
+    inserted_records: list[dict[str, Any]] = []
+
+    if auto_insert and organization_id and property_id:
+        insert_rows = prepare_financial_record_insert_rows(
+            organization_id=organization_id,
+            property_id=property_id,
+            records=extracted_records,
+            transcript=transcript,
+            created_by=created_by,
+        )
+        insert_statement, insert_params = build_financial_record_insert_statement(insert_rows)
+        inserted_records = execute_financial_record_insert_script(db, insert_statement, insert_params)
+        logger.info('[DB] Inserted %d record(s) into financial_records: %s',
+                    len(inserted_records), json.dumps(inserted_records, default=str)[:500])
+    else:
+        logger.info('[DB] Skipping auto-insert (auto_insert=%s, org=%s, prop=%s)',
+                    auto_insert, organization_id, property_id)
+
+    response_payload = {
+        'ok': True,
+        'filename': audio.filename,
+        'transcript': transcript,
+        'raw_output': raw_output,
+        'debug_saved_path': str(debug_copy_path) if debug_copy_path else None,
+        'debug_size_bytes': size_bytes,
+        'voice_router_marker': 'debug-audio-v6-local-whisper',
+        'extracted_records': extracted_records,
+        'extraction_raw_output': extraction_raw_output,
+        'insert_script_row_count': len(insert_rows),
+        'insert_script_sql': insert_statement,
+        'inserted_records': inserted_records,
+        'whisper_transcription': True,
+        'openai_responses_model': OPENAI_RESPONSES_MODEL,
+        'openai_response_preview': json.dumps(openai_response)[:2000],
+        'openai_api_key_configured': bool(OPENAI_API_KEY),
+        'voice_quota': voice_quota_status,
+    }
+    _append_voice_log({
+        'request_id': request_id,
+        'route': '/voice/transcribe',
+        'timestamp': datetime.now().isoformat(),
+        'request': {
             'filename': audio.filename,
-            'transcript': transcript,
-            'raw_output': raw_output,
+            'organization_id': organization_id,
+            'property_id': property_id,
+            'created_by': created_by,
+            'auto_insert': auto_insert,
             'debug_saved_path': str(debug_copy_path) if debug_copy_path else None,
-            'debug_size_bytes': size_bytes,
-            'voice_router_marker': 'debug-audio-v6-local-whisper',
-            'extracted_records': extracted_records,
-            'extraction_raw_output': extraction_raw_output,
-            'insert_script_row_count': len(insert_rows),
-            'insert_script_sql': insert_statement,
-            'inserted_records': inserted_records,
-            'whisper_transcription': True,
-            'openai_responses_model': OPENAI_RESPONSES_MODEL,
-            'openai_response_preview': json.dumps(openai_response)[:2000],
-            'openai_api_key_configured': bool(OPENAI_API_KEY),
-        }
-        _append_voice_log({
-            'request_id': request_id,
-            'route': '/voice/transcribe',
-            'timestamp': datetime.now().isoformat(),
-            'request': {
-                'filename': audio.filename,
-                'organization_id': organization_id,
-                'property_id': property_id,
-                'created_by': created_by,
-                'auto_insert': auto_insert,
-                'debug_saved_path': str(debug_copy_path) if debug_copy_path else None,
-                'size_bytes': size_bytes,
-            },
-            'response': response_payload,
-        })
-        logger.info('[VOICE] ── Request %s complete ── transcript=%d chars, extracted=%d, inserted=%d',
-                    request_id, len(transcript), len(extracted_records), len(inserted_records))
-        return response_payload
-    finally:
-        try:
-            if 'temp_path' in locals() and temp_path.exists():
-                temp_path.unlink()
-        except OSError:
-            pass
+            'size_bytes': size_bytes,
+        },
+        'response': response_payload,
+    })
+    logger.info('[VOICE] ── Request %s complete ── transcript=%d chars, extracted=%d, inserted=%d',
+                request_id, len(transcript), len(extracted_records), len(inserted_records))
+    return response_payload

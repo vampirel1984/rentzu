@@ -1,6 +1,8 @@
 // Modified by AI on 07/03/2026. Edit #1.
+// Modified by AI on 07/18/2026. Edit #2.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import { createFinancialRecord, FinancialRecord, FinancialRecordPayload, updateFinancialRecord } from '../services/financialRecords';
@@ -22,7 +24,8 @@ const EXPENSE_CATEGORY_OPTIONS = [
   { value: 'repair', label: 'Repair' },
   { value: 'travel', label: 'Travel' },
   { value: 'commission', label: 'Commission' },
-  { value: 'interest', label: 'Interest' },
+  { value: 'interest', label: 'Mortgage Interest' },
+  { value: 'mortgage', label: 'Mortgage Principal (non-deductible)' },
   { value: 'other', label: 'Other' },
   { value: 'insurance', label: 'Insurance' },
   { value: 'tax', label: 'Tax' },

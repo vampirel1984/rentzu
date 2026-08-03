@@ -1,6 +1,7 @@
 // Modified by AI on 07/03/2026. Edit #1.
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, ImageBackground, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
 import { Organization, updateOrganization } from '../services/organizations';

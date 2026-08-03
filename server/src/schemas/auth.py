@@ -18,6 +18,5 @@ class AuthResponse(BaseModel):
     user_id: str | None = None
     organization_id: str | None = None
     organization_ids: list[str] | None = None
-    debug_code: str | None = None
     delivery_mode: str | None = None
     access_token: str | None = None

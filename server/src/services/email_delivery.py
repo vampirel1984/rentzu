@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Tuple
 
 
-OUTBOX_DIR = Path(r'D:\apps\rentzu\server\outbox')
+OUTBOX_DIR = Path(os.getenv('RENTZU_OUTBOX_DIR', Path(__file__).resolve().parents[2] / 'outbox'))
 
 
 def _build_verification_email(email: str, code: str):

@@ -14,6 +14,7 @@ router = APIRouter()
 def financial_records_index(
     organization_id: UUID | None = Query(default=None),
     property_id: UUID | None = Query(default=None),
+    unit_id: UUID | None = Query(default=None),
     limit: int = Query(default=5, ge=1, le=100),
     cursor: str | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -21,7 +22,7 @@ def financial_records_index(
 ):
     if organization_id:
         current_user.require_org_access(organization_id)
-    return list_financial_records(db, organization_id=organization_id, property_id=property_id, limit=limit, cursor=cursor)
+    return list_financial_records(db, organization_id=organization_id, property_id=property_id, unit_id=unit_id, limit=limit, cursor=cursor)
 
 
 @router.get('/{record_id}', response_model=FinancialRecordRead)

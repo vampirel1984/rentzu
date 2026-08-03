@@ -24,9 +24,11 @@ Current auth demo flow
 - POST /auth/request-code
 - POST /auth/verify-code
 
-Current demo verification code
-------------------------------
-123456 (when `RENTZU_FIXED_VERIFICATION_CODE=123456` is set)
+Verification codes
+------------------
+Randomly generated per request and delivered by SMTP. There is no fixed/bypass
+code. To read the most recent code locally during development, query the
+`email_verification_codes` table for the newest `pending` row.
 
 Current bootstrap behavior
 --------------------------

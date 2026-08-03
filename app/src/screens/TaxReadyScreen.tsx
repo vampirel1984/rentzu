@@ -1,6 +1,8 @@
 // Modified by AI on 07/03/2026. Edit #1.
+// Modified by AI on 07/18/2026. Edit #2.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Sharing from 'expo-sharing';
 
 import { getPortfolioSummary, getPropertyTaxReport, listProperties, Property, PropertyPortfolioSummary, PropertyTaxReport } from '../services/properties';
@@ -38,7 +40,8 @@ const TAX_CATEGORY_GROUPS: { key: string; label: string; keys: string[]; kind: '
   { key: 'maintenance', label: 'Maintenance & Repairs', keys: ['maintenance', 'repair', 'repairs'], kind: 'expense', icon: '🔧' },
   { key: 'travel', label: 'Travel', keys: ['travel', 'mileage'], kind: 'expense', icon: '✈️' },
   { key: 'tax', label: 'Taxes', keys: ['tax', 'property_tax', 'property_taxes', 'taxes'], kind: 'expense', icon: '🏛️' },
-  { key: 'other', label: 'Other Expenses', keys: ['commission', 'interest', 'other', 'insurance', 'hoa', 'condo', 'association', 'uncategorized'], kind: 'expense', icon: '📦' },
+  { key: 'interest', label: 'Mortgage Interest', keys: ['interest', 'mortgage_interest', 'loan_interest'], kind: 'expense', icon: '🏦' },
+  { key: 'other', label: 'Other Expenses', keys: ['commission', 'other', 'insurance', 'hoa', 'condo', 'association', 'uncategorized'], kind: 'expense', icon: '📦' },
 ];
 
 const IMPROVEMENT_KEYS = ['improvement', 'improvements', 'capital_improvement', 'capital_improvements'];
@@ -175,7 +178,11 @@ export default function TaxReadyScreen({ organizationId, organizations, selected
       const uri = await downloadScheduleEPdf(organizationId, selectedYear);
       await sharePdf(uri, 'Open or share Schedule E PDF');
     } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Could not download PDF');
+      if (err instanceof Error && err.message === 'EXPORTS_REQUIRE_UPGRADE') {
+        Alert.alert('Upgrade required', 'Tax-ready PDF exports need a paid plan. Upgrade from the Account tab to unlock Schedule E and Property Expense downloads.');
+      } else {
+        Alert.alert('Error', err instanceof Error ? err.message : 'Could not download PDF');
+      }
     } finally {
       setDownloadingPdf(null);
     }
@@ -189,7 +196,11 @@ export default function TaxReadyScreen({ organizationId, organizations, selected
       const uri = await downloadPropertyExpensePdf(organizationId, selectedYear, propId);
       await sharePdf(uri, 'Open or share Property Expense PDF');
     } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Could not download PDF');
+      if (err instanceof Error && err.message === 'EXPORTS_REQUIRE_UPGRADE') {
+        Alert.alert('Upgrade required', 'Tax-ready PDF exports need a paid plan. Upgrade from the Account tab to unlock Schedule E and Property Expense downloads.');
+      } else {
+        Alert.alert('Error', err instanceof Error ? err.message : 'Could not download PDF');
+      }
     } finally {
       setDownloadingPdf(null);
     }

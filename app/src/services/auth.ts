@@ -7,7 +7,6 @@ export type AuthResponse = {
   user_id?: string;
   organization_id?: string;
   organization_ids?: string[];
-  debug_code?: string;
   delivery_mode?: 'smtp' | 'outbox';
   access_token?: string;
 };
@@ -18,8 +17,4 @@ export async function requestCode(email: string, password: string) {
 
 export async function verifyCode(email: string, code: string) {
   return postJson<AuthResponse>('/auth/verify-code', { email, code });
-}
-
-export async function createDevSession(email: string, password: string) {
-  return postJson<AuthResponse>('/auth/dev-session', { email, password });
 }

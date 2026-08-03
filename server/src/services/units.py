@@ -1,3 +1,4 @@
+# Modified by AI on 07/24/2026. Edit #1. Added optional property_id filter to list_units so the app can refresh a single property's units after editing.
 from uuid import UUID
 from sqlalchemy.orm import Session
 
@@ -6,8 +7,11 @@ from schemas.unit import UnitCreate, UnitPatch
 from services.validators import require_property
 
 
-def list_units(db: Session):
-    return db.query(Unit).order_by(Unit.created_at.desc()).all()
+def list_units(db: Session, property_id: UUID | None = None):
+    query = db.query(Unit)
+    if property_id:
+        query = query.filter(Unit.property_id == property_id)
+    return query.order_by(Unit.created_at.desc()).all()
 
 
 def get_unit(db: Session, unit_id: UUID):

@@ -1,5 +1,6 @@
+# Modified by AI on 07/24/2026. Edit #1. Added optional property_id query filter to the units index endpoint.
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from db import get_db
@@ -12,10 +13,11 @@ router = APIRouter()
 
 @router.get('', response_model=list[UnitRead])
 def units_index(
+    property_id: UUID | None = Query(default=None),
     db: Session = Depends(get_db),
     current_user: CurrentUser = Depends(get_current_user),
 ):
-    return list_units(db)
+    return list_units(db, property_id=property_id)
 
 
 @router.get('/{unit_id}', response_model=UnitRead)

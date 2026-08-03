@@ -42,7 +42,7 @@ It is deliberately **not** a full tax-preparation or e-file product. The stronge
 - Report placeholders (Schedule E Summary, Property Expense Summary) surfaced in the UI ahead of full backend support.
 
 ### Auth & accounts
-- Email-based signup with verification codes (dev bypass via `RENTZU_FIXED_VERIFICATION_CODE=123456`).
+- Email-based signup with verification codes (delivered by SMTP; no dev bypass).
 - JWT auth; every endpoint enforces org access via `current_user.require_org_access(...)`.
 - **Language preference** in the user profile (English / 中文) via `GET`/`PATCH /users/me`; the chosen language also drives voice-to-text transcription.
 

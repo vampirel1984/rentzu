@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Text
+from sqlalchemy import Column, DateTime, Integer, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
@@ -12,6 +12,7 @@ class EmailVerificationCode(Base):
     email = Column(Text, nullable=False, index=True)
     code = Column(Text, nullable=False)
     status = Column(Text, nullable=False, default="pending")
+    attempts = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=False)
     verified_at = Column(DateTime(timezone=True))

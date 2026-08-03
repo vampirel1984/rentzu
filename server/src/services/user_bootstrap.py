@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from models.organization import Organization
 from models.organization_user import OrganizationUser
 from models.user import User
-from services.passwords import hash_password
+from services.passwords import hash_password, verify_password
 
 
 def split_name_from_email(email: str):
@@ -18,13 +18,21 @@ def split_name_from_email(email: str):
     return parts[0].capitalize(), ' '.join(parts[1:]).title()
 
 
-def get_or_create_user_for_auth(db: Session, email: str, password: str):
+class AuthError(Exception):
+    """Raised when credentials are rejected."""
+
+
+def authenticate_or_register(db: Session, email: str, password: str):
+    """Authenticate an existing user, or register a new one.
+
+    An existing account's password_hash is never rewritten here - supplying the
+    wrong password raises AuthError instead of silently taking the account over.
+    """
     user = db.query(User).filter(User.email == email).first()
     if user:
-        user.password_hash = hash_password(password)
-        db.commit()
-        db.refresh(user)
-        return user
+        if not verify_password(password, user.password_hash):
+            raise AuthError('Invalid email or password')
+        return user, False
 
     first_name, last_name = split_name_from_email(email)
     user = User(
@@ -37,7 +45,7 @@ def get_or_create_user_for_auth(db: Session, email: str, password: str):
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    return user, True
 
 
 def get_or_create_user_and_org(db: Session, email: str):

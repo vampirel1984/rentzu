@@ -1,5 +1,7 @@
+// Modified by AI on 07/18/2026. Edit #1.
+// 402 responses mean tax-ready exports are gated behind a paid plan.
 import { API_BASE_URL, getAccessToken } from './api';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 export async function downloadScheduleEPdf(organizationId: string, year: number): Promise<string> {
   const token = getAccessToken();
@@ -11,6 +13,9 @@ export async function downloadScheduleEPdf(organizationId: string, year: number)
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
+  if (result.status === 402) {
+    throw new Error('EXPORTS_REQUIRE_UPGRADE');
+  }
   if (result.status !== 200) {
     throw new Error(`Failed to download Schedule E PDF (status ${result.status})`);
   }
@@ -35,6 +40,9 @@ export async function downloadPropertyExpensePdf(
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
+  if (result.status === 402) {
+    throw new Error('EXPORTS_REQUIRE_UPGRADE');
+  }
   if (result.status !== 200) {
     throw new Error(`Failed to download Property Expense PDF (status ${result.status})`);
   }

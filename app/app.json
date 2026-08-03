@@ -5,24 +5,45 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#eef4ff"
-    },
+    "icon": "./assets/icon.png",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "com.rentzu.app"
+      "package": "com.rocmaxrealty.rentzu",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0e1a"
+      }
     },
     "ios": {
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Rentzu uses the microphone so you can speak rent and expense records for transcription."
       }
     },
-    "extra": {},
+    "extra": {
+      "eas": {
+        "projectId": "9c39a918-97af-4c6a-bb92-09306815c53a"
+      }
+    },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-asset",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Rentzu uses the microphone so you can speak rent and expense records for transcription.",
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0a0e1a"
+        }
+      ]
     ]
   }
 }

@@ -31,12 +31,14 @@ def _decode_cursor(cursor: str) -> tuple[date, datetime, UUID] | None:
         return None
 
 
-def list_financial_records(db: Session, organization_id: UUID | None = None, property_id: UUID | None = None, limit: int = 5, cursor: str | None = None):
+def list_financial_records(db: Session, organization_id: UUID | None = None, property_id: UUID | None = None, unit_id: UUID | None = None, limit: int = 5, cursor: str | None = None):
     query = db.query(FinancialRecord)
     if organization_id:
         query = query.filter(FinancialRecord.organization_id == organization_id)
     if property_id:
         query = query.filter(FinancialRecord.property_id == property_id)
+    if unit_id:
+        query = query.filter(FinancialRecord.unit_id == unit_id)
 
     total = query.count()
 

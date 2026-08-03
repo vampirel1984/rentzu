@@ -1,11 +1,14 @@
 // Modified by AI on 07/03/2026. Edit #1.
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+// Modified by AI on 07/18/2026. Edit #2.
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BarChart } from 'react-native-chart-kit';
 
 import { deleteFinancialRecord, FinancialRecord, listFinancialRecords, updateFinancialRecord } from '../services/financialRecords';
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder';
-import { listProperties, Property, getPropertyTaxReport, PropertyTaxReport } from '../services/properties';
+import { listProperties, Property, PropertyUnit } from '../services/properties';
+import { updateUnit } from '../services/units';
 import { Organization } from '../services/organizations';
 import { colors } from '../theme/tokens';
 
@@ -40,7 +43,11 @@ type RecordFormDraft = {
   notes?: string;
 };
 
-const RECORDS_PAGE_SIZE = 5;
+// Large page size used when loading a property's full record set into memory
+// up front (see fetchAllPropertyRecords) so unit/property switches are
+// instant client-side filters instead of new network round-trips.
+const ALL_RECORDS_PAGE_SIZE = 100; // backend caps `limit` at 100 (financial_records_index: le=100)
+const ALL_RECORDS_MAX_PAGES = 50; // safety cap (~10k records) against runaway pagination loops
 
 const CATEGORY_LABELS: Record<string, string> = {
   rent: 'Rent',
@@ -54,7 +61,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   other: 'Other',
   travel: 'Travel',
   commission: 'Commission',
-  interest: 'Interest',
+  interest: 'Mortgage Interest',
+  mortgage: 'Mortgage Principal',
   improvement: 'Improvement',
   insurance: 'Insurance',
   tax: 'Tax',
@@ -75,6 +83,81 @@ const formatCategoryLabel = (value?: string | null): string => {
   return CATEGORY_LABELS[value] || value.split('_').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
 };
 
+// Fetches every page of financial records for a property in one go (not
+// unit-scoped) so the client can hold the full set in memory and filter by
+// unit instantly, without a server round-trip per unit/property switch.
+const fetchAllPropertyRecords = async (organizationId: string, propertyId: string) => {
+  const all: FinancialRecord[] = [];
+  let cursor: string | undefined;
+  let total = 0;
+  for (let page = 0; page < ALL_RECORDS_MAX_PAGES; page += 1) {
+    const response = await listFinancialRecords(organizationId, propertyId, ALL_RECORDS_PAGE_SIZE, cursor);
+    all.push(...response.items);
+    total = response.total;
+    cursor = response.next_cursor || undefined;
+    if (!cursor) break;
+  }
+  return { items: all, total };
+};
+
+type ComputedTaxReport = {
+  income_total: number;
+  expense_total: number;
+  net_total: number;
+  record_count: number;
+  monthly_totals: { month: string; income: string; expense: string; net: string }[];
+};
+
+// Mirrors the server's build_property_tax_report aggregation (income/expense/
+// net totals + monthly breakdown for a given year and optional unit), but
+// computed client-side from an already-loaded record set so switching units
+// or back to the whole property is instant with no loading state.
+const computeTaxReport = (allRecords: FinancialRecord[], unitId: string | undefined, year: number): ComputedTaxReport => {
+  const monthlyMap = new Map<string, { income: number; expense: number; net: number }>();
+  let income = 0;
+  let expense = 0;
+  let recordCount = 0;
+
+  for (const record of allRecords) {
+    if (unitId && record.unit_id !== unitId) continue;
+    const recordYear = Number(record.record_date?.slice(0, 4));
+    if (recordYear !== year) continue;
+
+    recordCount += 1;
+    const amount = Number(record.amount) || 0;
+    const monthKey = record.record_date.slice(0, 7);
+    if (!monthlyMap.has(monthKey)) monthlyMap.set(monthKey, { income: 0, expense: 0, net: 0 });
+    const bucket = monthlyMap.get(monthKey)!;
+
+    if ((record.type || '').toLowerCase() === 'income') {
+      income += amount;
+      bucket.income += amount;
+      bucket.net += amount;
+    } else {
+      expense += amount;
+      bucket.expense += amount;
+      bucket.net -= amount;
+    }
+  }
+
+  const monthly_totals = Array.from(monthlyMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([month, totals]) => ({
+      month,
+      income: String(totals.income),
+      expense: String(totals.expense),
+      net: String(totals.net),
+    }));
+
+  return {
+    income_total: income,
+    expense_total: expense,
+    net_total: income - expense,
+    record_count: recordCount,
+    monthly_totals,
+  };
+};
+
 const screenWidth = Dimensions.get('window').width;
 
 export default function HomeScreen({
@@ -85,80 +168,95 @@ export default function HomeScreen({
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | undefined>(selectedPropertyIdProp);
   const [selectedRecordId, setSelectedRecordId] = useState<string | undefined>();
-  const [records, setRecords] = useState<FinancialRecord[]>([]);
   const [selectedUnitId, setSelectedUnitId] = useState<string | undefined>();
-  const [recordsTotal, setRecordsTotal] = useState(0);
-  const [nextCursor, setNextCursor] = useState<string | undefined>();
-  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savingRecord, setSavingRecord] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'overview' | 'records' | 'documents'>('overview');
-  const [taxReport, setTaxReport] = useState<PropertyTaxReport | null>(null);
+  // Holds every financial record for the selected property (all units,
+  // unfiltered), fetched once per property load. Selecting a unit or
+  // switching back to the whole property just filters this in memory —
+  // no server round-trip, so there's no loading flicker on switch.
+  const [allRecords, setAllRecords] = useState<FinancialRecord[]>([]);
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const currentYear = new Date().getFullYear();
+  const selectionRequestRef = useRef(0);
 
   const selectedProperty = useMemo(
     () => properties.find((item) => item.id === selectedPropertyId),
     [properties, selectedPropertyId],
   );
 
-  const hasMoreRecords = records.length < recordsTotal && (!!nextCursor || records.length === 0);
+  // Client-side filter of the in-memory record set by the selected unit —
+  // instant, no network call.
+  const records = useMemo(
+    () => (selectedUnitId ? allRecords.filter((r) => r.unit_id === selectedUnitId) : allRecords),
+    [allRecords, selectedUnitId],
+  );
+  const recordsTotal = records.length;
+
+  // Client-side aggregation of the in-memory record set, mirroring the
+  // server's tax-report math (see computeTaxReport above) — instant, no
+  // network call on unit/property switch.
+  const taxReport = useMemo(
+    () => (selectedPropertyId ? computeTaxReport(allRecords, selectedUnitId, currentYear) : null),
+    [allRecords, selectedUnitId, currentYear, selectedPropertyId],
+  );
 
   const refreshData = useCallback(async (nextPropertyId?: string) => {
     if (!organizationId) return;
+    const requestId = ++selectionRequestRef.current;
     setLoading(true);
     try {
       const propertyRows = await listProperties(organizationId);
+      if (requestId !== selectionRequestRef.current) return;
       setProperties(propertyRows);
       const requestedPropertyId = nextPropertyId ?? selectedPropertyId ?? selectedPropertyIdProp;
       const fallbackPropertyId = propertyRows[0]?.id;
       const activePropertyId = propertyRows.some((item) => item.id === requestedPropertyId) ? requestedPropertyId : fallbackPropertyId;
       const activeProperty = propertyRows.find((item) => item.id === activePropertyId);
       setSelectedPropertyId(activePropertyId);
+      setSelectedUnitId(undefined);
       onSelectedPropertyChange?.(activeProperty);
 
       if (activePropertyId) {
-        const [response, report] = await Promise.all([
-          listFinancialRecords(organizationId, activePropertyId, RECORDS_PAGE_SIZE),
-          getPropertyTaxReport(activePropertyId, currentYear),
-        ]);
-        setRecords(response.items);
-        setRecordsTotal(response.total);
-        setNextCursor(response.next_cursor || undefined);
-        setTaxReport(report);
+        const { items } = await fetchAllPropertyRecords(organizationId, activePropertyId);
+        if (requestId !== selectionRequestRef.current) return;
+        setAllRecords(items);
       } else {
-        setRecords([]);
-        setRecordsTotal(0);
-        setNextCursor(undefined);
-        setTaxReport(null);
+        setAllRecords([]);
       }
       setError('');
     } catch (err) {
+      if (requestId !== selectionRequestRef.current) return;
       setError(err instanceof Error ? err.message : 'Could not load property records.');
     } finally {
-      setLoading(false);
+      if (requestId === selectionRequestRef.current) setLoading(false);
     }
-  }, [onSelectedPropertyChange, organizationId, selectedPropertyIdProp, currentYear]);
+  }, [onSelectedPropertyChange, organizationId, selectedPropertyIdProp]);
 
-  const handleLoadMore = useCallback(async () => {
-    if (!organizationId || !selectedPropertyId || loadingMore || !nextCursor) return;
-    setLoadingMore(true);
+  // Selecting a unit (or tapping back to the whole property with
+  // unitId=undefined) is a pure client-side switch over the already-loaded
+  // allRecords/taxReport — no server call, no loading state.
+  const handleSelectUnit = useCallback((unitId?: string) => {
+    setSelectedUnitId((prev) => (prev === unitId ? prev : unitId));
+  }, []);
+
+  const handleUnitFieldSave = useCallback(async (unit: PropertyUnit, field: 'unit_code' | 'tenant_name', rawValue: string) => {
+    const value = rawValue.trim();
+    const current = field === 'unit_code' ? unit.unit_code : (unit.tenant_name || '');
+    if (value === (current || '')) return;
+    if (field === 'unit_code' && !value) return;
     try {
-      const response = await listFinancialRecords(organizationId, selectedPropertyId, RECORDS_PAGE_SIZE, nextCursor);
-      setRecords((prev) => {
-        const seen = new Set(prev.map((item) => item.id));
-        const appended = response.items.filter((item) => !seen.has(item.id));
-        return [...prev, ...appended];
-      });
-      setRecordsTotal(response.total);
-      setNextCursor(response.next_cursor || undefined);
+      const updated = await updateUnit(unit.id, field === 'tenant_name' ? { tenant_name: value || null } : { unit_code: value });
+      setProperties((prev) => prev.map((p) => p.id === unit.property_id
+        ? { ...p, units: (p.units || []).map((u) => (u.id === unit.id ? { ...u, ...updated } : u)) }
+        : p));
+      setError('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not load more records.');
-    } finally {
-      setLoadingMore(false);
+      setError(err instanceof Error ? err.message : 'Could not save unit.');
     }
-  }, [nextCursor, organizationId, selectedPropertyId, loadingMore]);
+  }, []);
 
   useEffect(() => {
     if (selectedPropertyIdProp) setSelectedPropertyId(selectedPropertyIdProp);
@@ -294,19 +392,52 @@ export default function HomeScreen({
           </View>
         )}
 
-        {/* Property Info Card */}
+        {/* Property + Units selectable group */}
         {selectedProperty && (
-          <View style={styles.propertyInfoCard}>
-            <Image source={getPropertyIcon(selectedProperty.property_type)} style={styles.propertyImage} resizeMode="cover" />
-            <View style={styles.propertyInfoText}>
-              <Text style={styles.propertyInfoName}>{selectedProperty.name}</Text>
-              <Text style={styles.propertyInfoMeta}>
-                {formatPropertyType(selectedProperty.property_type)} · {selectedProperty.total_units} {selectedProperty.total_units === 1 ? 'unit' : 'units'}
-              </Text>
-            </View>
-            <Pressable style={styles.editButton}>
-              <Image source={editIcon} style={styles.editButtonIcon} resizeMode="contain" />
+          <View style={styles.propertyGroup}>
+            <Pressable
+              style={[styles.propertyRow, !selectedUnitId && styles.propertyRowSelected]}
+              onPress={() => handleSelectUnit(undefined)}>
+              <Image source={getPropertyIcon(selectedProperty.property_type)} style={styles.propertyImage} resizeMode="cover" />
+              <View style={styles.propertyInfoText}>
+                <Text style={styles.propertyInfoName}>{selectedProperty.name}</Text>
+                <Text style={styles.propertyInfoMeta}>
+                  {formatPropertyType(selectedProperty.property_type)} · {selectedProperty.total_units} {selectedProperty.total_units === 1 ? 'unit' : 'units'}
+                </Text>
+              </View>
+              <Pressable style={styles.editButton}>
+                <Image source={editIcon} style={styles.editButtonIcon} resizeMode="contain" />
+              </Pressable>
             </Pressable>
+
+            {(selectedProperty.units?.length || 0) > 0 && (
+              <View style={styles.unitList}>
+                {selectedProperty.units?.map((unit) => (
+                  <Pressable
+                    key={unit.id}
+                    style={[styles.unitTablet, selectedUnitId === unit.id && styles.unitTabletSelected]}
+                    onPress={() => handleSelectUnit(unit.id)}>
+                    <TextInput
+                      style={styles.unitCodeInput}
+                      defaultValue={unit.unit_code}
+                      selectTextOnFocus
+                      placeholder="Unit"
+                      placeholderTextColor={colors.textMuted}
+                      onFocus={() => handleSelectUnit(unit.id)}
+                      onEndEditing={(e) => handleUnitFieldSave(unit, 'unit_code', e.nativeEvent.text)}
+                    />
+                    <TextInput
+                      style={styles.unitTenantInput}
+                      defaultValue={unit.tenant_name || ''}
+                      placeholder="Add tenant name"
+                      placeholderTextColor={colors.textMuted}
+                      onFocus={() => handleSelectUnit(unit.id)}
+                      onEndEditing={(e) => handleUnitFieldSave(unit, 'tenant_name', e.nativeEvent.text)}
+                    />
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
         )}
 
@@ -451,7 +582,7 @@ export default function HomeScreen({
 
         {activeTab === 'records' && (
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>This Year Records ({records.length} of {recordsTotal})</Text>
+            <Text style={styles.cardTitle}>All Records ({records.length})</Text>
             {records.length === 0 && <Text style={styles.helper}>No records yet.</Text>}
             {records.map((record) => (
               <View key={record.id} style={styles.recordRow}>
@@ -477,11 +608,6 @@ export default function HomeScreen({
                 </View>
               </View>
             ))}
-            {hasMoreRecords && (
-              <Pressable style={styles.loadMoreButton} onPress={handleLoadMore} disabled={loadingMore}>
-                {loadingMore ? <ActivityIndicator size="small" color={colors.accent} /> : <Text style={styles.loadMoreText}>Load more records</Text>}
-              </Pressable>
-            )}
           </View>
         )}
 
@@ -575,16 +701,62 @@ const styles = StyleSheet.create({
   orgDropdownItemActive: { backgroundColor: colors.accentSoft },
   orgDropdownItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: '600' },
   orgDropdownItemTextActive: { color: colors.accent },
-  propertyInfoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  propertyGroup: {
     marginHorizontal: 20,
     marginTop: 16,
     backgroundColor: colors.card,
     borderRadius: 18,
-    padding: 14,
+    padding: 6,
     borderWidth: 1,
     borderColor: colors.cardBorder,
+  },
+  propertyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  propertyRowSelected: {
+    backgroundColor: colors.surfaceStrong,
+    borderColor: colors.accent,
+  },
+  unitList: {
+    paddingHorizontal: 4,
+    paddingTop: 2,
+    paddingBottom: 2,
+  },
+  unitTablet: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    marginTop: 6,
+    backgroundColor: colors.menu,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+  },
+  unitTabletSelected: {
+    backgroundColor: colors.surfaceStrong,
+    borderColor: colors.accent,
+  },
+  unitCodeInput: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    fontWeight: '800',
+    minWidth: 52,
+    maxWidth: 88,
+    paddingVertical: 0,
+  },
+  unitTenantInput: {
+    flex: 1,
+    marginLeft: 10,
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: '600',
+    paddingVertical: 0,
   },
   propertyImage: {
     width: 52,

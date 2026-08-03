@@ -4,6 +4,7 @@ export type PropertyUnit = {
   id: string;
   property_id: string;
   unit_code: string;
+  tenant_name?: string | null;
   unit_type?: string | null;
   bedroom_count?: string | number | null;
   bathroom_count?: string | number | null;
@@ -92,8 +93,12 @@ export async function updateProperty(propertyId: string, payload: Partial<Proper
   return patchJson<Property>(`/properties/${propertyId}`, payload);
 }
 
-export async function getPropertyTaxReport(propertyId: string, year: number) {
-  return getJson<PropertyTaxReport>(`/properties/${propertyId}/tax-report?year=${year}`);
+export async function getPropertyTaxReport(propertyId: string, year: number, unitId?: string) {
+  let query = `/properties/${propertyId}/tax-report?year=${year}`;
+  if (unitId) {
+    query += `&unit_id=${unitId}`;
+  }
+  return getJson<PropertyTaxReport>(query);
 }
 
 export async function getPortfolioSummary(organizationId: string, year: number) {
